@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %} 
+{% block body %}
+         <div class="jumbotron text-center">
+
+            <h1>Agence Lorem</h1> 
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque dolorum quae molestiae soluta, ea deserunt repellendus minima laborum quos animi voluptates esse laudantium magni voluptas, ipsam totam repudiandae illum quasi.</p>
+        </div>
+        <div class="container">
+            <h2>Les derniers biens</h2>
+            <div class="row flex">
+                {% for   property in properties %}
+                   
+                    <!-- 注意 property.title property.PostalCode 这些不是数据中的键名 而是src/entity/property.php 中的方法 如title为getTitle postalcode 为getPostalCode -->
+                      <div class="col-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{{ path('property.show' , {id:property.id , slug:property.slug }) }}">{{ property.title }}</a>
+                                </h5>
+                                <p class="card-text">
+                                    {{ property.city }} {{property.PostalCode }}
+                                </p>
+                                <div class="text-danger" style="font-weight:bold;font-size:2rem; ">{{ property.formattedPirce  }} € {# property.price|number_format(2,'.'," ") 'int number_format(show how many decimal' ,'string separater before decimal',"string separater in the number ") #}</div>
+                            </div>
+                        </div>
+                    </div> 
+
+                {% endfor %}
+            </div>
+        </div>
+
+   
+
+
+       
+ {% endblock  %}

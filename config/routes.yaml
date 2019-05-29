@@ -1,8 +1,15 @@
+app_lucky_number:
+    path: /lucky/number
+    controller: App\Controller\LuckyController::number
+       
 home:
-	path: /
-	controller: App\Controller\HomeController::index
+    path: /
+    controller: App\Controller\HomeController::home
 
-
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+home2:
+    path: /home2
+    controller: App\Controller\HomeController::home2
+home3:
+    path: /home3
+    controller: App\Controller\HomeController::home3   
+  

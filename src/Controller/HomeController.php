@@ -1,15 +1,99 @@
 <?php
 
+// src/Controller/HomeController.php
+
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response ;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
+use App\Repository\PropertyRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Property ;
+
+class HomeController extends AbstractController
+{
+     /**
+      * @var Environment # 说明是环境变量
+      */
+     private $twig; # config/service.yaml line 23
+
+     /**
+      * @var PropertyRepository
+      */
+     private $repository ;
+
+     public function __construct(Environment $twig , PropertyRepository $repository)
+     {
+          $this->twig = $twig;
+          $this->repository = $repository;
+     }
+
+     public function home3()
+     {
+          return new Response($this->twig->render('pages/home3.html.twig')); # 调用  templates/pages/home.html.twig 这个视图
+     }
+
+     /**
+      * @param PropertyRepository $repository
+      * @return Response
+      */
+     public function home(PropertyRepository $repository): Response
+     {
+
+          $properties = $repository->findLatest();
 
 
-class HomeController{
+
+          return $this->render(
+               'pages/home.html.twig',
+               [
+                    'properties' => $properties,
+               ]
+          );
+     }
+     public function home2()
+     {
+          return new Response('salut les gens home2 ');
+     }
 
 
-    public function index():Response
-    {
-         return new Response(    " salut les gens ");
-    }
+     /**
+      * @Route("/biens/{slug}-{id}" , name="property.show" , requirements = {"slug":"[a-z0-9\-]*" , "id":"\d+"}  )
+      * @return Response
+      */
+      
+      public function show(Property $property ,string $slug ): Response
+      {
+           # $property 是通过传入的{id} 从数据看获得的数据 
+           # 如果 传入的slug和数据库的slug不同,则重新定向 
+          if($property->getSlug() !== $slug ) 
+          {
+               return $this->redirectToRoute('property.show', #  route name = property.show 
+               [
+                    'id'=>$property->getId(),      # 令id= 数据库的id
+                    'slug'=>$property->getSlug(),  # slug= 数据库的slug
+               ],301); 
+          }
+
+          # 把 Property $property 放入 则可以下面两句代码改成 public function show(Property $property ): Response # 会自动利用传入的id/floor等等 查找 相关数据
+           //public function show($slug, $id): Response
+          // $property = $this->repository->find($id);
+
+          return $this->render(
+               'pages/show.html.twig',
+               [
+                    'property' => $property,
+                    'current_menu' => 'properties',
+               ]
+          );
+     }
+
+     /**
+      * @Route("/hello")
+      */
+     public function hello()
+     {
+          return new Response('hello ');
+     }
 }

@@ -1,0 +1,16 @@
+{
+   
+  "emmet.includeLanguages": {
+    "html.twig": "html",
+    "twig": "html"
+  },
+    "emmet.showSuggestionsAsSnippets": true,
+   
+    "emmet.optimizeStylesheetParsing": false,
+    "emmet.syntaxProfiles": {
+      "html.twig": "html",
+      "twig": "html"
+    },
+    "emmet.triggerExpansionOnTab": true
+  
+}
