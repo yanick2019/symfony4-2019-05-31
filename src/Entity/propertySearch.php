@@ -12,7 +12,7 @@ class propertySearch
     /**
      * @var int|null
      */
-    private $maxPrice;
+    private $maxPrice; 
     /**
      * @var int|null
      * @Assert\Range(min=10,max=400) # 这个范围是10-400 否则无效
