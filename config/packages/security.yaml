@@ -1,13 +1,29 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
+        from_database:
+                entity:
+                    class: App\Entity\User
+                    property: username #通过username管理
+
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: true
+            #http_basic: true 
+            form_login: 
+                #true  # true 可写可不写 只要form_login 没被注释 当访问/admin 且不是ROLE_ADMIN 则会要求需要登录
+                check_path: /login 
+                #login_path: /mylogin  #自定义为登录跳转页面 查看安全策略参数 php bin/console config:dump-reference security
+            
+            # 当访问/logout时会退出登录 需要设置 config/routes.yaml
+            logout:
+                path: /logout
+                target: /
+
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -18,5 +34,15 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN } # admin 这个页面只允许ROLE_ADMIN
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+    
+    encoders:
+        #App\Entity\User: plaintext   #plaintext: 不加密密码  
+        App\Entity\User:
+            algorithm: bcrypt # algorithm:算法 即加密方法
+            cost: 12  #加密强度 12为最强
+        #Symfony\Component\Security\Core\User\User: plaintext 
+        # 加密方式 plaintext: 不加密密码  
+        #退出刚才的登录 http://log:out@localhost:8000/admin  

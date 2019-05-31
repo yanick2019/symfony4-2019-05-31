@@ -12,4 +12,6 @@ home2:
 home3:
     path: /home3
     controller: App\Controller\HomeController::home3   
-  
+
+logout:
+    path: /logout
