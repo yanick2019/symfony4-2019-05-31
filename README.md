@@ -25,5 +25,5 @@ You can initialize this repository with code from a Subversion, Mercurial, or TF
 	git push -u origin dev 推dev分支到github  
 查看连接  
 	git remote -v show  
-断开链接 
+断开链接  
 	git remote rm origin  
