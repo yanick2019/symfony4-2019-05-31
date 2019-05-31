@@ -13,6 +13,7 @@ class PropertyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            #给form加input   
             ->add('title')
             ->add('description')
             ->add('surface')
@@ -20,6 +21,7 @@ class PropertyType extends AbstractType
             ->add('bedrooms')
             ->add('floor')
             ->add('price')
+            #给form加select标签
             ->add('heat',ChoiceType::class,['choices'=> $this->getChoices()]) # 相当于 html 的select -- option 
            // ->add('city',null,['label'=>'Ville']) #把文字city替换为ville
             ->add('city')
@@ -41,7 +43,7 @@ class PropertyType extends AbstractType
             #修改config/packages/services.yaml 是否也是对应的locale 如 parameters: locale: 'en'改为'fr'(forms.fr.yaml)或 'cn'(forms.cn.yaml) 等等 用来自动替换label中的文字
         ]);
     }
-    public function getChoices()
+    public function getChoices(): array
     {
         $choices = Property::HEAT;
         $output = [] ;

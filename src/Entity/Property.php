@@ -183,7 +183,7 @@ class Property
     {
         return $this->price;
     }
-    public function getFormattedPirce():string
+    public function getFormattedPrice():string
     {
         return number_format($this->price , 0,'.'," ") ;
 

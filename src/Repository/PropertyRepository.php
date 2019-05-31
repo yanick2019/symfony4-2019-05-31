@@ -9,7 +9,8 @@ use App\Entity\Property;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Doctrine\ORM\QueryBuilder;
-
+use Doctrine\ORM\Query;
+use App\Entity\propertySearch;
 
 /**
  * @method Property|null find($id, $lockMode = null, $lockVersion = null)
@@ -24,24 +25,39 @@ class PropertyRepository extends ServiceEntityRepository
         parent::__construct($registry, Property::class);
     }
 
-   
+
     /**
-     * @return Property[]
+     * @return Query
      */
-    public function findAllVisible(): array
+    public function findAllVisibleQuery(PropertySearch $search): Query
     {
-        return $this->createQueryBuilder('p') ## 定义表property缩写为 p
-           ->where('p.sold = 0 ') #where #flase = 0 
-           // ->andWhere('p.exampleField = :val') #where 
-            //->setParameter('val', $value) 
-          //  ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10) # limit 
-            ->getQuery()
-            ->getResult()
-        ;
+        $query =  $this->findVisibleQuery();
+
+        if ($search->getMaxPrice()) {
+            $query = $query
+                ->andWhere(' p.price <= :maxprice ')
+                ->setParameter('maxprice', $search->getMaxPrice());
+        }
+
+        if ($search->getMinSurface()) {
+            $query = $query
+                ->andWhere(' p.surface >= :minsurface ')
+                ->setParameter('minsurface', $search->getMinSurface());
+        }
+
+        return $query->getQuery();
+
+
+        /* return $this->createQueryBuilder('p') ## 定义表property缩写为 p
+            ->where('p.sold = 0 ') #where #flase = 0 
+             ->andWhere('p.exampleField = :val') #where 
+            ->setParameter('val', $value) 
+              ->orderBy('p.id', 'ASC')
+              ->setMaxResults(10) # limit 
+            ->getQuery(); */
     }
 
-     /**
+    /**
      * @return Property[];
      */
     public function findLatest(): array
@@ -55,21 +71,20 @@ class PropertyRepository extends ServiceEntityRepository
             ->getResult()
             */
         return
-            $this->findVisibleQuery() 
-                 ->setMaxResults(4)   
-                ->getQuery()
-                ->getResult()    
-     ; 
+            $this->findVisibleQuery()
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
     }
 
     # 加 ":QueryBuilder" 要先载入use Doctrine\ORM\QueryBuilder; 否则报错must be an instance of App\Repository\QueryBuilder, instance of Doctrine\ORM\QueryBuilder returned
-    private function findVisibleQuery(  $sqlWhere = ' p.sold = false  ' ) : QueryBuilder 
+    private function findVisibleQuery($sqlWhere = ' p.sold = 0  '): QueryBuilder
     {
-        return $this->createQueryBuilder('p') 
-        ->where(  $sqlWhere   )
-        ;
-            
+        return $this->createQueryBuilder('p')
+            ->where($sqlWhere);
     }
+
+
 
     // /**
     //  * @return Property[] Returns an array of Property objects

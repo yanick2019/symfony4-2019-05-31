@@ -41,7 +41,7 @@ class HomeController extends AbstractController
      public function home(PropertyRepository $repository): Response
      {
 
-          $properties = $repository->findLatest();
+           $properties = $repository->findLatest();
 
 
 
