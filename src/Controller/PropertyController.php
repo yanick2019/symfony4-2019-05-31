@@ -86,7 +86,7 @@ class PropertyController extends AbstractController
         $page =  $request->query->getInt('page', 1) ;
         $offset = $limit * ($page - 1) ;
 
-        $paginator = new Paginator( $this->repository->findAllVisibleQuery() );
+        $paginator = new Paginator( $this->repository->findVisibleQuery()->getQuery() );
 
         $paginator->getQuery()
             ->setFirstResult( $offset ) // Offset
@@ -105,6 +105,22 @@ class PropertyController extends AbstractController
                 'current_menu' => 'properties', 
             ]
         );  
+
+        /*
+        https://github.com/KnpLabs/KnpPaginatorBundle/issues/392
+        $em = $this->getDoctrine()->getManager();
+        $dql = "SELECT p FROM AppBundle:Product p WHERE p.enabled = :enabled AND p.private = :private AND p.approved = :approved AND p.thumb >= :thumb GROUP BY p.name ORDER BY p.thumb DESC, p.created ASC";
+        $query = $em->createQuery($dql);
+        $query->setParameters( array(
+        'enabled' => 1,
+        'private' => 0,
+        'approved' => 1,
+        'thumb' => 0
+        )); */
+
+
+
+
 
     }
 

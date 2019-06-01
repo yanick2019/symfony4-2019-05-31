@@ -78,7 +78,7 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
     # 加 ":QueryBuilder" 要先载入use Doctrine\ORM\QueryBuilder; 否则报错must be an instance of App\Repository\QueryBuilder, instance of Doctrine\ORM\QueryBuilder returned
-    private function findVisibleQuery($sqlWhere = ' p.sold = 0  '): QueryBuilder
+    public function findVisibleQuery($sqlWhere = ' p.sold = 0  '): QueryBuilder
     {
         return $this->createQueryBuilder('p')
             ->where($sqlWhere);
