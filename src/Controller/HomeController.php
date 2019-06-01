@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 use App\Repository\PropertyRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Entity\Property ;
+use App\Entity\Property;
 
 class HomeController extends AbstractController
 {
@@ -21,9 +21,9 @@ class HomeController extends AbstractController
      /**
       * @var PropertyRepository
       */
-     private $repository ;
+     private $repository;
 
-     public function __construct(Environment $twig , PropertyRepository $repository)
+     public function __construct(Environment $twig, PropertyRepository $repository)
      {
           $this->twig = $twig;
           $this->repository = $repository;
@@ -41,7 +41,7 @@ class HomeController extends AbstractController
      public function home(PropertyRepository $repository): Response
      {
 
-           $properties = $repository->findLatest();
+          $properties = $repository->findLatest();
 
 
 
@@ -62,24 +62,40 @@ class HomeController extends AbstractController
       * @Route("/biens/{slug}-{id}" , name="property.show" , requirements = {"slug":"[a-z0-9\-]*" , "id":"\d+"}  )
       * @return Response
       */
-      
-      public function show(Property $property ,string $slug ): Response
-      {
-           # $property 是通过传入的{id} 从数据看获得的数据 
-           # 如果 传入的slug和数据库的slug不同,则重新定向 
-          if($property->getSlug() !== $slug ) 
-          {
-               return $this->redirectToRoute('property.show', #  route name = property.show 
-               [
-                    'id'=>$property->getId(),      # 令id= 数据库的id
-                    'slug'=>$property->getSlug(),  # slug= 数据库的slug
-               ],301); 
+
+     public function show(  Property $property ,    string $slug , int $id  ): Response
+     {
+         // $property = $this->repository->find($id);
+          # $property 是通过传入的{id} 从数据库获得的数据 
+
+          /*  
+          $property->getId()  #数据库中的数据
+          $property->getSlug()#数据库中的数据
+          $slug # $_GET 进来的数据
+          
+          */
+          
+          # 如果 传入的slug和数据库的slug不同,则重新定向 
+          if ( $property &&   $property->getSlug() !== $slug) {
+               return $this->redirectToRoute(
+                    'property.show', #  route name = property.show 
+                    [
+                         'id' => $property->getId(),      # 令id= 数据库的id
+                         'slug' => $property->getSlug(),  # slug= 数据库的slug
+                    ],
+                    301
+               );
           }
+           /*
+          # 把 Property $property 放入参数里public function show(Property $property ) , 会自动调用 $this->repository->find($id);   查找数据获得property
 
-          # 把 Property $property 放入 则可以下面两句代码改成 public function show(Property $property ): Response # 会自动利用传入的id/floor等等 查找 相关数据
-           //public function show($slug, $id): Response
-          // $property = $this->repository->find($id);
-
+            public function show(  string $slug , int $id ): Response
+           $property = $this->repository->find($id);
+           改成
+           public function show(Property $property , string $slug ): Response
+          
+           省略代码
+          */
           return $this->render(
                'pages/show.html.twig',
                [

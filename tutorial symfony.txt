@@ -20,7 +20,7 @@ vscode emmet支持twig
   
 }
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+指令 教程
 
 
   public function index( ):Response
@@ -64,7 +64,17 @@ vscode emmet支持twig
 	 <<<<<<<<
 	 卸载组件 (没测试过 只是在网上找的教程 )
 	 composer remove packageauthor/packagename --update-with-dependencies
-
+	 
+	 
+	<<<<<<<<<<<<<
+	返回老的数据库结构
+	php bin/console doctrine:migrations:status #获得migrations 状态
+	找previous Version: 2019-05-31 02:43:08 (20190531024308) 后面括号的版本号
+	输入 php bin/console doctrine:migrations:migrate 20190531024308 会让数据库返回这个状态 并在src/migrations 文件加下 删除对应的版本文件
+	然后再一次
+		准备 php bin/console make:migration
+		查看新生成src/migrations 版本文件是否正确
+		在 加载到数据库 php bin/console doctrine:migrations:migrate
 
 	 
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -478,6 +488,65 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 
                 </div>
 		这样,就算弹出错误信息,表的input还是会保持在同一行
+		
+
+9/16 Gestion des options
+	php bin/console make:entity
+		> Option # option表
+		> name( string  255 no null )  #name 字段
+		> properties (relation Property ManyToMany yes options ) # 会建立表option_property 及外键option_id连接 表option id 外键property_id连接表Property id 
+	php bin/console make:migration 	
+	php bin/console doctrine:migrations:migrate
+	
+	php bin/console make:crud Option 
+		
+		#为option建立crud 这个指令会创建一系列相关文件 以免去了手动创建
+		# created: src/Controller/OptionController.php
+		# created: src/Form/OptionType.php
+		# created: templates/option/_delete_form.html.twig
+		# created: templates/option/_form.html.twig
+		# created: templates/option/edit.html.twig
+		# created: templates/option/index.html.twig
+		# created: templates/option/new.html.twig
+		# created: templates/option/show.html.twig
+		 修改 src/entity/option.php
+			加 @ORM\Entity(repositoryClass="App\Repository\OptionRepository")
+   				@Orm\Table(name="`Option`") # 要加这句否则 mysql会有字符冲突Option
+		 
+		
+		修改文件//src/form/optiontype.php
+			注释掉 ->add('properties') 不然会报错
+	把文件//src/controller/OptionController.php 放到 //src/controller/Admin/ 并改名为 AminOptionController.php 
+		修改类名与文件名相同 里面的html.twig文件 都写 admin/
+	在templete/admin下建立option文件夹并复制 templete/admin/property下的.twig文件到templete/admin/option 然后修改里面的文字
+	
+	
+	修改 src/Form/PropertyType.php 
+		增加  ->add('options',EntityType::class,[
+               'class'=>Option::class,
+               'choice_label'=>'name',
+               'multiple'=> true ,#use App\Entity\Option;
+
+           ]) 
+ 
+		
+	很重要	
+	# /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Option", inversedBy="properties") #所有者用inversedBy 非所有者用mappedBy 结果就是查数据时会 找表 所有者_非所有者 如 table property_option 
+     */
+    private $options;
+
+	  /**
+		 * @ORM\ManyToMany(targetEntity="App\Entity\Property", mappedBy="options") #所有者用inversedBy 非所有者用mappedBy 结果就是查数据时会 找表 所有者_非所有者 如 table property_option
+		 */
+		private $properties;	
+		
+		
+		
+
+
+
+		
 		
 				
 				

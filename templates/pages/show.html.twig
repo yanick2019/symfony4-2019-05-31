@@ -1,10 +1,11 @@
 {% extends "base.html.twig" %}
 
-{% block  title property.title %}
-    {% block body %}
+{% block  title   property ? property.title:"non trouve" %}
+{% block body %}
 
 
-        <div class="jumbotron">
+    <div class="jumbotron">
+        {%  if property %}
             <div class="container">
 
                 <div class="row">
@@ -71,7 +72,13 @@
                     <h2>Specificites</h2>
                 </div>
             </div>
-        </div>
+        {% else %}
+            <div class="container">
+                objet non trouve
+            </div>
+
+        {%  endif  %}
+    </div>
 
 
-    {% endblock  %}
+{% endblock  %}

@@ -1,6 +1,6 @@
 <?php
 
-// src/Repository/PropertyRepository
+// src/Repository/PropertyRepository.php
 # 数据库中表 Property  
 
 namespace App\Repository;
@@ -44,16 +44,25 @@ class PropertyRepository extends ServiceEntityRepository
                 ->andWhere(' p.surface >= :minsurface ')
                 ->setParameter('minsurface', $search->getMinSurface());
         }
+        if ($search->getOptions()->count() > 0) {
+            foreach ($search->getOptions() as  $option) {
+                $query = $query
+                    ->andWhere(" :option MEMBER OF p.options ") # 什么时候俩个表一起找的,为什么用options 而不是用option 
+                    ->setParameter("option", $option);
+            }
+        }
 
         return $query->getQuery();
 
 
-        /* return $this->createQueryBuilder('p') ## 定义表property缩写为 p
+        /*     return $this->createQueryBuilder('p') ## 定义表property缩写为 p
             ->where('p.sold = 0 ') #where #flase = 0 
-             ->andWhere('p.exampleField = :val') #where 
-            ->setParameter('val', $value) 
-              ->orderBy('p.id', 'ASC')
-              ->setMaxResults(10) # limit 
+            
+            ->andWhere('p.exampleField = :val') #where 
+            ->setParameter('val', $value)
+            ->orderBy('p.id', 'ASC')
+            
+            ->setMaxResults(30) # limit 
             ->getQuery(); */
     }
 
@@ -78,7 +87,7 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
     # 加 ":QueryBuilder" 要先载入use Doctrine\ORM\QueryBuilder; 否则报错must be an instance of App\Repository\QueryBuilder, instance of Doctrine\ORM\QueryBuilder returned
-    public function findVisibleQuery($sqlWhere = ' p.sold = 0  '): QueryBuilder
+    private function findVisibleQuery($sqlWhere = ' p.sold = 0  '): QueryBuilder
     {
         return $this->createQueryBuilder('p')
             ->where($sqlWhere);

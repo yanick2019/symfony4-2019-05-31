@@ -1,48 +1,50 @@
-{% extends "base.html.twig" %} 
+{% extends "base.html.twig" %}
 {% block title " gerer les biens "%}
 {% block body %}
-         <div class="jumbotron text-center">
+    <div class="jumbotron text-center">
 
-            <h1>Gere les biens</h1> 
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">{{message}}</div>
-            {% endfor %}
-            
-        </div>
-        <div class="container mt-4 ">
-            <h1>Gerer les biens </h1>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Titre</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for property in properties %}
+        <h1>Gere les biens</h1>
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{message}}</div>
+        {% endfor %}
+
+    </div>
+    <div class="container mt-4 ">
+        <h1>Gerer les biens
+        </h1>
+        <a href="{{ path('admin.option.index') }}" class='btn btn-primary'>gerer l'option
+        </a>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for property in properties %}
                     <tr>
                         <td>{{ property.title }}</td>
                         <td>
-                            <a href="{{ path('admin.property.edit' , { id:property.id })}}" class="btn btn-secondary">Editer</a> 
+                            <a href="{{ path('admin.property.edit' , { id:property.id })}}" class="btn btn-secondary">Editer</a>
                             <form method="post" action="{{ path('admin.property.delete' , { id:property.id })}}" style="display:inline-block" onsubmit=" return confirm('Etes vous vraiement sur ? ')">
-                                <input type="hidden" name="_method" value="DELETE">
+                                <input name="_method" type="hidden" value="DELETE">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ property.id )}}">
                                 <button class="btn btn-danger">Supprimer</button>
                             </form>
-                             
+
                         </td>
-                          
+
                     </tr>
-                    {% endfor %}
-                </tbody>
+                {% endfor %}
+            </tbody>
 
-            </table>
-            <div class="text-right mb-4">
-                <a href="{{ path('admin.property.new')}}" class="btn btn-primary">Creer un nouveau bien</a>
-            </div>
-        </div>   
-                
+        </table>
+        <div class="text-right mb-4">
+            <a href="{{ path('admin.property.new')}}" class="btn btn-primary">Creer un nouveau bien</a>
+        </div>
+    </div>
 
 
-       
- {% endblock  %}
+{% endblock  %}

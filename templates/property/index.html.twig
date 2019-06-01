@@ -12,7 +12,10 @@
                     {{ form_row(form.minSurface)}}
                 </div>
                 <div class="col">
-                    {{ form_row(form.maxPrice)}}
+                    {{ form_row(form.maxPrice) }}
+                </div>
+                 <div class="col">
+                    {{ form_row(form.options) }}
                 </div>
                 <div class="col">
                     <div class="form-group">
@@ -30,8 +33,7 @@
     <div class="container mt-4">
 
         <h1>Voir tous nos biens</h1>
-        <h4>{{ countProperties }}
-            biens trouve</h4>
+        <h4>{{ pageCount }}    biens trouve</h4>
         <div class="row">
             {% for property in properties %}
                 <div class="col-md-4">
@@ -39,9 +41,14 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="pagination">
-            {{ knp_pagination_render(properties) }}
-            {# 页数 #}
+        <div class="pagination"> okok  
+
+            {{   knp_pagination_render(properties)    }}
+             
+             {# 页数 #}
+             <br><br>
+             <br><br>
+             <br><br>
         </div>
 
     </div>

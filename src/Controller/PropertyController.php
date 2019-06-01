@@ -12,7 +12,7 @@ use App\Repository\PropertyRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\Tools\Pagination\Paginator ;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use App\Entity\propertySearch;
 use App\Form\PropertySearchType;
 
@@ -29,11 +29,11 @@ class PropertyController extends AbstractController
 
 
 
-    public function __construct(PropertyRepository $repository, ObjectManager $em )
+    public function __construct(PropertyRepository $repository, ObjectManager $em)
     {
         $this->repository =  $repository; # 引用src/Repository/PropertyRepository
         $this->em = $em;
-     }
+    }
 
     /**
      * @Route("/biens",name="property.index") # 对应 path('property.index')或config/routes.yaml 中的 property.index:
@@ -45,66 +45,70 @@ class PropertyController extends AbstractController
 
 
         #建立表
-        $search = new propertySearch() ;
-        $form = $this->createForm(PropertySearchType::class , $search ) ; #载入src/form/PropertySearchType.php的数据结构
-        $form->handleRequest($request);# 获取$_GET的数据并把这些数据赋值给 $search ;
+        $search = new propertySearch();
+
+        $form = $this->createForm(PropertySearchType::class, $search); #载入src/form/PropertySearchType.php的数据结构
+
+        $form->handleRequest($request); # 获取$_GET的数据并把这些数据赋值给 $search ;
 
         #$this->findData() ;
-        $limit = 12 ;
-        $query = $this->repository->findAllVisibleQuery($search) ;
-        $result = $query->getResult() ;
-        $countProperties = count($result );
+        $limit = 12;
+        $query = $this->repository->findAllVisibleQuery($search);
+        $result = $query->getResult();
+        $pageCount = count($result);
+
         $properties = $paginator->paginate(
-            $query  , /* query NOT result */
-            $request->query->getInt('page', 1) , /*page number*/
+            $query, /* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
             $limit  /*limit per page*/
         );
 
-
+        # 需要引用 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; 并继承 extends AbstractController
         return $this->render(
             "property/index.html.twig",
             [
-                'countProperties'=> $countProperties ,
-                'form' => $form->createView() ,
+                'pageCount' => $pageCount,
+                'form' => $form->createView(),
                 'properties' => $properties,
                 'current_menu' => 'properties', # 给视图文件传值 令 变量 current_menu = properties
             ]
-        ); # 需要引用 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; 并继承 extends AbstractController
-
+        );
     }
 
-     /**
+
+
+    /**
      * @Route("/mybiens",name="property.myindex") # 对应 path('property.index')或config/routes.yaml 中的 property.index:
      * @return Response
      */
-    public function myindex(  Request $request ): Response
+    public function myindex(Request $request): Response
     {
 
-      
-        #用 use Doctrine\ORM\Tools\Pagination\Paginator ;分页
-        $limit = 12 ;
-        $page =  $request->query->getInt('page', 1) ;
-        $offset = $limit * ($page - 1) ;
 
-        $paginator = new Paginator( $this->repository->findVisibleQuery()->getQuery() );
+        #用 use Doctrine\ORM\Tools\Pagination\Paginator ;分页
+        $limit = 12;
+        $page =  $request->query->getInt('page', 1);
+        $offset = $limit * ($page - 1);
+
+        $paginator = new Paginator($this->repository->findVisibleQuery()->getQuery());
 
         $paginator->getQuery()
-            ->setFirstResult( $offset ) // Offset
+            ->setFirstResult($offset) // Offset
             ->setMaxResults($limit); // Limit
 
- 
 
 
-        $properties =   $paginator ;
-        
-        
+
+        $properties =   $paginator;
+
+
         return $this->render(
             "property/index.html.twig",
             [
                 'properties' => $properties,
-                'current_menu' => 'properties', 
+                'current_menu' => 'properties',
             ]
-        );  
+        );
 
         /*
         https://github.com/KnpLabs/KnpPaginatorBundle/issues/392
@@ -117,11 +121,6 @@ class PropertyController extends AbstractController
         'approved' => 1,
         'thumb' => 0
         )); */
-
-
-
-
-
     }
 
 

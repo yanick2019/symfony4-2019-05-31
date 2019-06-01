@@ -1,12 +1,15 @@
 <?php
 
+//  src/Form/PropertyType.php
 namespace App\Form;
 
 use App\Entity\Property;
+use App\Entity\Option;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class PropertyType extends AbstractType
 {
@@ -24,6 +27,12 @@ class PropertyType extends AbstractType
             #给form加select标签
             ->add('heat',ChoiceType::class,['choices'=> $this->getChoices()]) # 相当于 html 的select -- option 
            // ->add('city',null,['label'=>'Ville']) #把文字city替换为ville
+           ->add('options',EntityType::class,[
+               'class'=>Option::class,
+               'choice_label'=>'name',
+               'multiple'=> true ,#use App\Entity\Option;
+
+           ])
             ->add('city')
            ->add('address')
             ->add('postal_code')

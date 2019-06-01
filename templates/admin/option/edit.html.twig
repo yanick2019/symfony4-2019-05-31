@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+{% block title 'edit les options ' %}
+{% block body %}
+    <div class="container mt-4">
+        <h1>edit les options</h1>
+         
+ 
+        {{ include( 'admin/option/_form.html.twig',{ form:form,button:'Editer'}) }}  
+        <!-- 注意是 include { 不是 % -->
+
+        {{ include('admin/option/_delete_form.html.twig') }}
+
+    </div>
+{% endblock %}

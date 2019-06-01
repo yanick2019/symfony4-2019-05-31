@@ -1,4 +1,7 @@
 <?php
+// src/controller/AdminPropertyController.php
+
+
 
 namespace App\Controller\Admin;
 
@@ -11,6 +14,7 @@ use App\Entity\Property;
 use App\Form\PropertyType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
+use App\Entity\Option;
 
 class AdminPropertyController extends AbstractController
 {
@@ -69,6 +73,9 @@ class AdminPropertyController extends AbstractController
      */
     public function edit(Property $property, Request $request)
     {
+       /*  $option = new Option();
+        $property->addOption($option); */
+
         $form =  $this->createForm(PropertyType::class, $property); # load $property  that  id  = { id } 
 
         # 接受 request 来的数据 包括get post 要先载入use Symfony\Component\HttpFoundation\Request; 
