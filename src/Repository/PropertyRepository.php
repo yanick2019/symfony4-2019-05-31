@@ -26,6 +26,11 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
 
+    public function findM()
+    {
+        return $this->createQueryBuilder('p')->getQuery();
+        
+    }
     /**
      * @return Query
      */
@@ -45,10 +50,12 @@ class PropertyRepository extends ServiceEntityRepository
                 ->setParameter('minsurface', $search->getMinSurface());
         }
         if ($search->getOptions()->count() > 0) {
-            foreach ($search->getOptions() as  $option) {
+            $k = 0 ;
+            foreach ($search->getOptions() as   $option) {
+                $k++ ;
                 $query = $query
-                    ->andWhere(" :option MEMBER OF p.options ") # 什么时候俩个表一起找的,为什么用options 而不是用option 
-                    ->setParameter("option", $option);
+                    ->andWhere(" :option$k MEMBER OF p.options ") #  会利用外键 经过表property left join option 寻找表 property_option 里值为 $option 所有数据 因为会是复数所以不用option而是options
+                    ->setParameter("option$k", $option);
             }
         }
 

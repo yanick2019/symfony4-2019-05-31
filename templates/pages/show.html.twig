@@ -2,7 +2,12 @@
 
 {% block  title   property ? property.title:"non trouve" %}
 {% block body %}
-
+    <div class="container">
+        {% if app.user.userName  == 'demo' %}
+            <a href="{{ path( 'admin.property.edit' , {id:property.id} )}}" class="btn btn-primary mt-4">editer ce biens
+            </a>
+        {% endif %}
+    </div>
 
     <div class="jumbotron">
         {%  if property %}
@@ -70,6 +75,21 @@
 
                 <div class="col-md-4">
                     <h2>Specificites</h2>
+                    <table class="table table-striped">
+
+
+                        {% for option in property.options %}
+                            <tr>
+                                <td>
+                                    {{ option.name }}
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </table>
+
+
                 </div>
             </div>
         {% else %}

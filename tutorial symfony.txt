@@ -75,6 +75,14 @@ vscode emmet支持twig
 		准备 php bin/console make:migration
 		查看新生成src/migrations 版本文件是否正确
 		在 加载到数据库 php bin/console doctrine:migrations:migrate
+		
+	<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	文件作用
+	src/
+		controller # 控制器
+		form	   # 表单<form>控制器
+		entity     # 数据库表控制器
+		repository # 操作数据库
 
 	 
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

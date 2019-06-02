@@ -82,6 +82,7 @@ class HomeController extends AbstractController
                     [
                          'id' => $property->getId(),      # 令id= 数据库的id
                          'slug' => $property->getSlug(),  # slug= 数据库的slug
+                         'options' => $property->getOptions() , 
                     ],
                     301
                );

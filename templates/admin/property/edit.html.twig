@@ -3,9 +3,15 @@
 {% block body %}
     <div class="container mt-4">
         <h1>edit les biens</h1>
+        <h3>
+            <a href="{{ path('property.show' , {id:property.id,slug:property.slug }) }}">Vue comme un client </a>
+        </h3>
+           {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{message}}</div>
+        {% endfor %}
         <div>{{ property.id }}</div>
 
-        {{ include( 'admin/property/_form.html.twig',{ form:form,button:'Editer'}) }}
+        {{ include( 'admin/property/_form.html.twig',{ form:form,button:'Enregistrer'}) }}
         <!-- 注意是 include { 不是 % -->
     </div>
 {% endblock %}

@@ -13,12 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/option" , name="admin.option")
+ * @Route("/admin/option"  )
  */
 class AdminOptionController extends AbstractController
 {
     /**
-     * @Route("/", name=".index", methods={"GET"})
+     * @Route("/", name="admin.option.index", methods={"GET"})
      */
     public function index(OptionRepository $optionRepository): Response
     {
@@ -28,7 +28,7 @@ class AdminOptionController extends AbstractController
     }
 
     /**
-     * @Route("/new", name=".new", methods={"GET","POST"})
+     * @Route("/new", name="admin.option.new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
     {
@@ -51,7 +51,7 @@ class AdminOptionController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name=".show", methods={"GET"})
+     * @Route("/{id}", name="admin.option.show", methods={"GET"})
      */
     public function show(Option $option): Response
     {
@@ -61,7 +61,7 @@ class AdminOptionController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name=".edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="admin.option.edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Option $option): Response
     {
@@ -83,11 +83,11 @@ class AdminOptionController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name=".delete", methods={"DELETE"})
+     * @Route("/{id}", name="admin.option.delete", methods={"DELETE"})
      */
     public function delete(Request $request, Option $option) 
     {
-        if ($this->isCsrfTokenValid('delete' . $option->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $option->getId() /* 根据'delete' . $option->getId() 创建 token  */, $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($option);
             $entityManager->flush();

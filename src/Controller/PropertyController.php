@@ -51,17 +51,26 @@ class PropertyController extends AbstractController
 
         $form->handleRequest($request); # 获取$_GET的数据并把这些数据赋值给 $search ;
 
+
+        $resultCount = $this->repository->findAllVisibleQuery($search)->getResult();
+        $pageCount = count($resultCount);
+
+
+
         #$this->findData() ;
         $limit = 12;
         $query = $this->repository->findAllVisibleQuery($search);
-        $result = $query->getResult();
-        $pageCount = count($result);
+
+
 
         $properties = $paginator->paginate(
             $query, /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
             $limit  /*limit per page*/
         );
+
+        # 这两句要放在$properties = $paginator->paginate( .... 的下面 否则  property/index.html.twig 里 knp_pagination_render(properties)  会失效
+
 
         # 需要引用 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; 并继承 extends AbstractController
         return $this->render(
@@ -198,5 +207,36 @@ class PropertyController extends AbstractController
         $em =  $this->getDoctrine()->getManager();
         $em->persist($property);
         $em->flush();
+    }
+
+    // Include the paginator through dependency injection, the autowire needs to be enabled in the project
+    public function default(Request $request, PaginatorInterface $paginator)
+    {
+        // Retrieve the entity manager of Doctrine
+        $em = $this->getDoctrine()->getManager();
+
+        // Get some repository of data, in our case we have an Appointments entity
+        $appointmentsRepository = $em->getRepository(Appointments::class);
+
+        // Find all the data on the Appointments table, filter your query as you need
+        $allAppointmentsQuery = $appointmentsRepository->createQueryBuilder('p')
+            ->where('p.status != :status')
+            ->setParameter('status', 'canceled')
+            ->getQuery();
+
+        // Paginate the results of the query
+        $appointments = $paginator->paginate(
+            // Doctrine Query, not results
+            $allAppointmentsQuery,
+            // Define the page parameter
+            $request->query->getInt('page', 1),
+            // Items per page
+            5
+        );
+
+        // Render the twig view
+        return $this->render('default/index.html.twig', [
+            'appointments' => $appointments
+        ]);
     }
 }

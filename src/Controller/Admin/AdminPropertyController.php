@@ -84,11 +84,13 @@ class AdminPropertyController extends AbstractController
             # 提交到数据库 需要用到 use Doctrine\Common\Persistence\ObjectManager; public function __construct(PropertyRepository $repository, ObjectManager $em ){$this->em = $em;}
             $this->em->flush();
             $this->addFlash('success','Bien modifie avec succes');
+           /*
+            
             return $this->redirectToRoute("admin.property.index");
+            */
         }
 
-
-
+ 
         return $this->render(
             "admin/property/edit.html.twig",
             [

@@ -4,7 +4,7 @@
 namespace App\Form;
 
 use App\Entity\PropertySearch;
-use App\Entity\Option ;
+use App\Entity\Option;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,40 +18,48 @@ class PropertySearchType extends AbstractType
     {
         $builder
             # 给form 加input 
-             ->add('maxPrice',IntegerType::class ,[
-                'required' => false,
-                'label' => false ,
-                'attr' => [
-                    'placeholder' => 'Budget max'
+            ->add(
+                'maxPrice',
+                IntegerType::class,
+                [
+                    'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'placeholder' => 'Budget max'
+                    ]
                 ]
-            ])
-            ->add('minSurface',IntegerType::class ,[
-                'required' => false,
-                'label' => false ,
-                'attr' => [
-                    'placeholder' => 'Surface minimale'
+            )
+            ->add(
+                'minSurface',
+                IntegerType::class,
+                [
+                    'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'placeholder' => 'Surface minimale'
+                    ]
                 ]
-            ])
-            ->add('options' , EntityType::class, [
-                'required'=> false,
-                'label'=> false ,
-                'class' => Option::class ,
-                'choice_label'=> 'name',
-                'multiple'=>true ,
-            ])
-           /*  #给form 加 sumbit按钮
-            ->add('submit',SubmitType::class,[
-                'label'=>'Rechercher'
-            ]) */
-        ;
+            )
+            ->add(
+                'options', # name="options"
+                EntityType::class,
+                [
+                    'required' => false,
+                    'label' => false, # input 的label 名字
+                    'class' => Option::class, # 用 src/entity/option.php 并访问数据库表option 
+                    'choice_label' => 'name',  # choice_label 会让 name="options[]" , => 'name' 找数据库表option 所有name的值 
+                    'multiple' => true,
+                ]
+            )
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => PropertySearch::class,
-            'method' => 'get',
-            'csrf_protection' => false , # 不加token
+            'method' => 'get', # 用的是get 而不是post
+            'csrf_protection' => false, # 不加token
         ]);
     }
 
@@ -65,4 +73,6 @@ class PropertySearchType extends AbstractType
     {
         return '';
     }
+    
+    
 }
