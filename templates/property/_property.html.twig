@@ -1,9 +1,15 @@
 <div class="card mb-4">
     {% if property.filename %}
-        {# <img alt="" class="card-img-top" src="/images/properties/{{property.filename}}" style="width:100%;height:auto;"> #}
-        <img alt="" class="card-img-top" src="{{ vich_uploader_asset(property,'imageFile') }}" style="width:100%;height:auto;">
-         
+        {% set imagePath = vich_uploader_asset(property,'imageFile')   %}
+    {% else %}
+        {% set imagePath =  '/images/properties/villaeco_2_chambrs__garage__066686800_1112_31102017.jpg' %}
     {% endif %}
+    {# <img alt="" class="card-img-top" src="/images/properties/{{property.filename}}" style="width:100%;height:auto;"> #}
+    <a href="{{path('property.show' , {slug:property.slug,id:property.id } )}}">
+        <img alt="" class="card-img-top" src="{{ imagePath | imagine_filter('thumb')  }}" style="width:100%;height:232px;">
+    </a>
+
+
     <div class="card-body">
 
         <h4 class="card-title">

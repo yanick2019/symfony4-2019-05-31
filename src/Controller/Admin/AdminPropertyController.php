@@ -14,7 +14,7 @@ use App\Entity\Property;
 use App\Form\PropertyType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\Option;
+  
 
 class AdminPropertyController extends AbstractController
 {
@@ -71,20 +71,31 @@ class AdminPropertyController extends AbstractController
     /**
      *  @Route("/admin/property/{id}" , name = "admin.property.edit" , methods="GET|POST"  ) 
      */
-    public function edit(Property $property, Request $request)
+    public function edit(Property $property,  Request $request ) # 如果参数有 $property 程序会根据传来的{id} 查找表property id ={id} 的数据
     {
         /*  $option = new Option();
         $property->addOption($option); */
 
-       
-        
+
+
         $form =  $this->createForm(PropertyType::class, $property); # load $property  that  id  = { id } 
 
         # 接受 request 来的数据 包括get post 要先载入use Symfony\Component\HttpFoundation\Request; 
         $form->handleRequest($request);
-        
+
+
         if ($form->isSubmitted() && $form->isValid()) {
+
+
+            /* 
+             if ($property->getImageFile() instanceof UploadedFile) {
+                $cacheManager->remove($helper->asset($property, 'imageFile')); # $helper->asset($property, 'imageFile') 和 $property->getfilename() 都是老图片的地址 所以就是通过老图片 删除该图片的缩略图缓存
+            } 
+            */
+
+
             # 提交到数据库 需要用到 use Doctrine\Common\Persistence\ObjectManager; public function __construct(PropertyRepository $repository, ObjectManager $em ){$this->em = $em;}
+            # 如果$property 不是当前方法的参数则需要加 $this->em->persist($property);
             $this->em->flush();
             $this->addFlash('success', 'Bien modifie avec succes');
             /*

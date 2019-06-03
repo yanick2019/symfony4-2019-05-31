@@ -63,8 +63,9 @@ vscode emmet支持twig
 	 $this->encoder->encodePassword(  $user , 'demo'); #加密
 	 <<<<<<<<
 	 卸载组件 (没测试过 只是在网上找的教程 )
-	 composer remove packageauthor/packagename --update-with-dependencies
+	 composer remove packageauthor/liip/imagine-bundle --update-with-dependencies
 	 
+	 清理缓存php bin/console  cache:clear
 	 
 	<<<<<<<<<<<<<
 	返回老的数据库结构
@@ -581,6 +582,49 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 			改好 src/entity/property.php 后 需要更新 表property数据库结构了
 				准备 php bin/console make:migration 检查 src/migrations/version 文件是否正确
 				再	 php bin/console dcctrine:migrations:migrate
+				
+				
+# 安装图片缩略图包 这个缩略图在缓存里 但是 删除数据库等 操作都不会对 缩略图操作 所以要增加监听事件来处理
+	composer require liip/imagine-bundle
+		修改 config/packages/liip_imagine.yaml 
+		
+				liip_imagine:
+						filter_sets:
+							thumb:
+								quality: 75
+								filters:
+									thumbnail:
+										size: [360,230]
+										mode: outbound
+	
+	
+		在要所需缩略图的后面加 | imagine_filter('thumb')
+			例如 <img alt="" class="card-img-top" src="{{ vich_uploader_asset(property,'imageFile') | imagine_filter('thumb') }}" style="width:100%;height:auto;"> 
+			
+	修改删除图片的同时操作缩略图
+		方法一
+			src/controller/AdminPropertyController.php
+			
+				在edit和delete方法里修改
+					增加
+						参数
+							CacheManager $cacheManager #use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+							UploaderHelper $helper #use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
+						语句
+							  if ($property->getImageFile() instanceof UploadedFile) 
+							  {
+									$cacheManager->remove($helper->asset($property, 'imageFile')); # $helper->asset($property, 'imageFile') 和 $property->getfilename() 都是老图片的地址 所以就是通过老图片 删除该图片的缩略图缓存
+								} 
+					
+		方法二
+			创建监听文件 src/Listener/imageCacheSubsriber.php
+			修改该文件
+			因为不是在注册过的文件夹(Listener)所以 不会自动加载
+			所以要修改 config/services.yaml
+				增加
+					    App\Listener\ImageCacheSubscriber:
+						tags: 
+						- { name: doctrine.event_subscriber }
 				
 		
 

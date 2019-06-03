@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
+ 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PropertyRepository")
@@ -378,7 +379,7 @@ class Property
 
     public function setImageFile(?File $imageFile = null): Property
     {
-        $this->imageFile = $imageFile;
+         $this->imageFile = $imageFile;
 
         /*  if (null !== $imageFile) {
             // It is required that at least one field changes if you are using doctrine
@@ -386,6 +387,8 @@ class Property
             $this->updated_at = new \DateTimeImmutable();
         } */
         if ( $this->imageFile instanceof UploadedFile && null !== $imageFile  ) {
+            
+              
  
             $this->updated_at = new \DateTime('now');
         }
