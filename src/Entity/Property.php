@@ -2,30 +2,61 @@
 
 // src/entity/property.php
 
-namespace App\Entity ;
+namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Cocur\Slugify\Slugify;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PropertyRepository")
+ * @Vich\Uploadable
  */
 class Property
 {
-    const HEAT = 
+    const HEAT =
     [
-        0 => "Electrique" ,
-        1 => "Gaz" ,
-        2 => "Collective" ,
-    ] ;
+        0 => "Electrique",
+        1 => "Gaz",
+        2 => "Collective",
+    ];
+
+
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * # ORM\Column 表示将会把下面这个值当成表的字段 类型为inter
      */
     private $id;
+
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string" , length=225)
+     */
+    private $filename;
+
+    /**
+     * NOTE: This is not a mapped field of entity metadata, just a simple property.
+     * 
+     * @Vich\UploadableField(mapping="property_image", fileNameProperty="filename" ) # 在php.ini 加 extension=php_fileinfo.dll 否则报错
+     * 
+     * @var File
+     * @Assert\Image( mimeTypes={"image/jpeg" ,   "image/jpg" ,  "image/gif",   "image/bmp",  "image/png" } )
+     */
+    private $imageFile;
+    #  代表 #config/packages/vich_uploader.yaml 中 mappings: property_image:
+    # filename 代表 本类的 $filename
+
+ 
+
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -97,13 +128,19 @@ class Property
      */
     private $options;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updated_at;
+     
+
 
     public function __construct()
     {
-         
 
-        $this->created_at = new \DateTime() ;# 不加斜杠会出错
-        $this->sold = false ;
+
+        $this->created_at = new \DateTime(); # 不加斜杠会出错
+        $this->sold = false;
         $this->options = new ArrayCollection();
     }
 
@@ -193,12 +230,11 @@ class Property
     {
         return $this->price;
     }
-    public function getFormattedPrice():string
+    public function getFormattedPrice(): string
     {
-        return number_format($this->price , 0,'.'," ") ;
-
+        return number_format($this->price, 0, '.', " ");
     }
-    
+
 
     public function setPrice(int $price): self
     {
@@ -218,11 +254,11 @@ class Property
 
         return $this;
     }
-    public function getHeatType()  
+    public function getHeatType()
     {
-        
-           
-       return self::HEAT[ $this->heat ] ;
+
+
+        return self::HEAT[$this->heat];
     }
 
     public function getCity(): ?string
@@ -309,6 +345,61 @@ class Property
             $this->options->removeElement($option);
             $option->removeProperty($this);
         }
+
+        return $this;
+    }
+
+    public function getFileName(): ?string
+    {
+          return $this->filename ;
+    }
+
+    public function setFileName(string $filename): ?Property
+    {
+         $this->filename = $filename;
+
+        return  $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+     /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the  update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param File|UploadedFile $imageFile
+     */
+
+    public function setImageFile(?File $imageFile = null): Property
+    {
+        $this->imageFile = $imageFile;
+
+        /*  if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updated_at = new \DateTimeImmutable();
+        } */
+        if ( $this->imageFile instanceof UploadedFile && null !== $imageFile  ) {
+ 
+            $this->updated_at = new \DateTime('now');
+        }
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

@@ -26,18 +26,17 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
 
-    public function findM()
+    public function findCount( PropertySearch $search , $sqlWhere = ' p.sold = 0  ' ): int
     {
-        return $this->createQueryBuilder('p')->getQuery();
-        
-    }
-    /**
-     * @return Query
-     */
-    public function findAllVisibleQuery(PropertySearch $search): Query
-    {
-        $query =  $this->findVisibleQuery();
+          //
+         
+        $query =  $this->createQueryBuilder('p')->select('count(p.id)')->where($sqlWhere);
 
+        return   $this->addWhereQuery(  $search ,   $query )->getQuery()->getSingleScalarResult();
+         
+    }
+    public function addWhereQuery(PropertySearch $search , QueryBuilder  $query ): QueryBuilder
+    {
         if ($search->getMaxPrice()) {
             $query = $query
                 ->andWhere(' p.price <= :maxprice ')
@@ -58,6 +57,17 @@ class PropertyRepository extends ServiceEntityRepository
                     ->setParameter("option$k", $option);
             }
         }
+        return $query ; 
+
+    } 
+    /**
+     * @return Query
+     */
+    public function findAllVisibleQuery(PropertySearch $search): Query
+    {
+        $query =  $this->findVisibleQuery() ;
+        $query = $this->addWhereQuery(  $search ,   $query ) ;
+       
 
         return $query->getQuery();
 

@@ -51,12 +51,12 @@ class PropertyController extends AbstractController
 
         $form->handleRequest($request); # 获取$_GET的数据并把这些数据赋值给 $search ;
 
+       
+         //   $resultCount = $this->repository->findAllVisibleQuery($search)->getResult();
+        //    $pageCount = count($resultCount);
 
-        $resultCount = $this->repository->findAllVisibleQuery($search)->getResult();
-        $pageCount = count($resultCount);
 
-
-
+        $pageCount =  $this->repository->findCount($search);
         #$this->findData() ;
         $limit = 12;
         $query = $this->repository->findAllVisibleQuery($search);

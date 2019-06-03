@@ -55,7 +55,7 @@ class AdminPropertyController extends AbstractController
             # 提交到数据库 需要用到 use Doctrine\Common\Persistence\ObjectManager; public function __construct(PropertyRepository $repository, ObjectManager $em ){$this->em = $em;}
             $this->em->persist($property); # 比下面的函数edit() 多了这一句 因为$property 是手动加的 
             $this->em->flush();
-            $this->addFlash('success','Bien creer avec succes');
+            $this->addFlash('success', 'Bien creer avec succes');
 
             return $this->redirectToRoute("admin.property.index");
         }
@@ -73,24 +73,27 @@ class AdminPropertyController extends AbstractController
      */
     public function edit(Property $property, Request $request)
     {
-       /*  $option = new Option();
+        /*  $option = new Option();
         $property->addOption($option); */
 
+       
+        
         $form =  $this->createForm(PropertyType::class, $property); # load $property  that  id  = { id } 
 
         # 接受 request 来的数据 包括get post 要先载入use Symfony\Component\HttpFoundation\Request; 
         $form->handleRequest($request);
+        
         if ($form->isSubmitted() && $form->isValid()) {
             # 提交到数据库 需要用到 use Doctrine\Common\Persistence\ObjectManager; public function __construct(PropertyRepository $repository, ObjectManager $em ){$this->em = $em;}
             $this->em->flush();
-            $this->addFlash('success','Bien modifie avec succes');
-           /*
+            $this->addFlash('success', 'Bien modifie avec succes');
+            /*
             
             return $this->redirectToRoute("admin.property.index");
             */
         }
 
- 
+
         return $this->render(
             "admin/property/edit.html.twig",
             [
@@ -107,13 +110,13 @@ class AdminPropertyController extends AbstractController
     public function delete(Property $property, Request $request)
     {
         if ($this->isCsrfTokenValid("delete" . $property->getId(), $request->get('_token'))) {
-           // dump("suppression");
-             $this->em->remove($property);
-             $this->em->flush();
-             $this->addFlash('success','Bien supprimer avec succes');
+            // dump("suppression");
+            $this->em->remove($property);
+            $this->em->flush();
+            $this->addFlash('success', 'Bien supprimer avec succes');
 
-           // return new Response("suppression");
-            
+            // return new Response("suppression");
+
         }
         return $this->redirectToRoute("admin.property.index");
     }

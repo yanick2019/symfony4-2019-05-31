@@ -81,7 +81,7 @@ vscode emmet支持twig
 	src/
 		controller # 控制器
 		form	   # 表单<form>控制器
-		entity     # 数据库表控制器
+		entity     # 数据库表结构控制器
 		repository # 操作数据库
 
 	 
@@ -549,7 +549,39 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 		 */
 		private $properties;	
 		
+##  Image à la une 加入图片 图片处理
+
+		安装
+			upload bundle 
+			网址 https://github.com/dustin10/VichUploaderBundle/blob/master/Resources/doc/installation.md
 		
+		composer require vich/uploader-bundle
+			选择y 表示信任这个包, 安装继续直至完成
+		
+		修改 config/pakage/vich_uploader.yaml
+			  选择 db_driver: orm 
+			  
+		这个bundle使用
+			修改 config/packages/vich_uploader.yaml
+					
+				vich_uploader:
+					db_driver: orm
+
+					mappings:
+						property_image:
+							uri_prefix: /images/properties # 图片的前缀
+							upload_destination: '%kernel.project_dir%/public/images/properties' # 图片上传地址
+			修改 // src/entity/property.php
+				增加
+					use Symfony\Component\HttpFoundation\File\File;
+					use Vich\UploaderBundle\Mapping\Annotation as Vich;
+					* @Vich\Uploadable */
+					
+					********
+			改好 src/entity/property.php 后 需要更新 表property数据库结构了
+				准备 php bin/console make:migration 检查 src/migrations/version 文件是否正确
+				再	 php bin/console dcctrine:migrations:migrate
+				
 		
 
 
