@@ -57,8 +57,9 @@ class PropertyController extends AbstractController
 
 
         $pageCount =  $this->repository->findCount($search);
+     
         #$this->findData() ;
-        $limit = 12;
+        $limit = 36 ;
         $query = $this->repository->findAllVisibleQuery($search);
 
 

@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
 use App\Entity\propertySearch;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @method Property|null find($id, $lockMode = null, $lockVersion = null)
@@ -26,16 +27,15 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
 
-    public function findCount( PropertySearch $search , $sqlWhere = ' p.sold = 0  ' ): int
+    public function findCount(PropertySearch $search, $sqlWhere = ' p.sold = 0  '): int
     {
-          //
-         
+        //
+
         $query =  $this->createQueryBuilder('p')->select('count(p.id)')->where($sqlWhere);
 
-        return   $this->addWhereQuery(  $search ,   $query )->getQuery()->getSingleScalarResult();
-         
+        return   $this->addWhereQuery($search,   $query)->getQuery()->getSingleScalarResult();
     }
-    public function addWhereQuery(PropertySearch $search , QueryBuilder  $query ): QueryBuilder
+    public function addWhereQuery(PropertySearch $search, QueryBuilder  $query): QueryBuilder
     {
         if ($search->getMaxPrice()) {
             $query = $query
@@ -49,25 +49,24 @@ class PropertyRepository extends ServiceEntityRepository
                 ->setParameter('minsurface', $search->getMinSurface());
         }
         if ($search->getOptions()->count() > 0) {
-            $k = 0 ;
+            $k = 0;
             foreach ($search->getOptions() as   $option) {
-                $k++ ;
+                $k++;
                 $query = $query
                     ->andWhere(" :option$k MEMBER OF p.options ") #  会利用外键 经过表property left join option 寻找表 property_option 里值为 $option 所有数据 因为会是复数所以不用option而是options
                     ->setParameter("option$k", $option);
             }
         }
-        return $query ; 
-
-    } 
+        return $query;
+    }
     /**
      * @return Query
      */
     public function findAllVisibleQuery(PropertySearch $search): Query
     {
-        $query =  $this->findVisibleQuery() ;
-        $query = $this->addWhereQuery(  $search ,   $query ) ;
-       
+        $query =  $this->findVisibleQuery();
+        $query = $this->addWhereQuery($search,   $query);
+
 
         return $query->getQuery();
 
@@ -107,10 +106,37 @@ class PropertyRepository extends ServiceEntityRepository
     private function findVisibleQuery($sqlWhere = ' p.sold = 0  '): QueryBuilder
     {
         return $this->createQueryBuilder('p')
+            // ->select('p', 'pics')
+            // ->leftJoin('p.pitures', 'pics')
             ->where($sqlWhere);
     }
 
 
+
+    /**
+     * @param Property[] $properties
+     * @return ArrayCollection
+     */
+    public function findForProperties(array $properties): ArrayCollection
+    {
+        $qb = $this->createQueryBuilder('p');
+        $pictures = $qb 
+        ->select('p')
+        ->where(
+            $qb->expr()->in(
+                'p.id',
+                $this->createQueryBuilder('p2')
+                ->select('Max(p2.id)')
+                ->where('p2.property IN (:properties)')
+                ->groupBy('p2.property')
+                ->getDQL()
+            )
+
+        )
+        ->getQuery()
+        ->setParameter('properties',$properties)
+        ->getResult();
+    }
 
     // /**
     //  * @return Property[] Returns an array of Property objects

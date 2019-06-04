@@ -457,7 +457,7 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 		修改src/DataFixtures/Propertyfixtures.php
 			安装 faker : composer require fzaninotto/faker(用来产生各做虚拟数据 这样就不需要自己一个个写了)
 		修改好src/DataFixtures/Propertyfixtures.php后	
-		运行 php bin/console doctrine:fixtures:load 会清空数据库表Property并插入新的数据
+		运行 php bin/console doctrine:fixtures:load #会执行src/datafixtures/propertyfixtures.php 里面的load方法  会清空数据库表Property并插入新的数据
 
 
 # 建立分页
@@ -652,8 +652,21 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 	# 
 	# 同理  <script src="{{ asset('build/app.js')}}"></script>代表 assets/js/app.js 
 
-		
-		
+#安装缓存 这样就不用每次搜索数据库了
+
+
+	在config/services.yaml 写入代码
+		 #载入缓存所需
+			Twig\CacheExtension\CacheProviderInterface:
+				class: Twig\CacheExtension\CacheProvider\PsrCacheAdapter    
+			Twig\CacheExtension\CacheStrategyInterface:
+				class: Twig\CacheExtension\CacheStrategy\LifetimeCacheStrategy
+
+			Twig\CacheExtension\Extension:
+				tags:
+				- { name: twig.extension }
+	修改			
+				
 		
 				
 				

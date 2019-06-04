@@ -557,6 +557,9 @@
     "symfony/yaml": {
         "version": "v4.2.9"
     },
+    "twig/cache-extension": {
+        "version": "1.4-dev"
+    },
     "twig/twig": {
         "version": "v2.10.0"
     },

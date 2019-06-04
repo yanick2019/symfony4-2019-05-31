@@ -14,6 +14,7 @@ use App\Entity\Property;
 use App\Form\PropertyType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
+use App\DataFixtures\Propertyfixtures ;
   
 
 class AdminPropertyController extends AbstractController
@@ -53,6 +54,7 @@ class AdminPropertyController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             # 提交到数据库 需要用到 use Doctrine\Common\Persistence\ObjectManager; public function __construct(PropertyRepository $repository, ObjectManager $em ){$this->em = $em;}
+           
             $this->em->persist($property); # 比下面的函数edit() 多了这一句 因为$property 是手动加的 
             $this->em->flush();
             $this->addFlash('success', 'Bien creer avec succes');
@@ -130,5 +132,18 @@ class AdminPropertyController extends AbstractController
 
         }
         return $this->redirectToRoute("admin.property.index");
+    }
+
+     /**
+     *  @Route("/admin/insertFakeData" , name = "admin.property.insertFakeData"   ) 
+     */
+    public function insertFakeData( Propertyfixtures $propertyfixtures   )
+    {
+        $propertyfixtures->load( $this->em );
+
+         
+        return new Response(
+            ' insert okok '
+        );
     }
 }

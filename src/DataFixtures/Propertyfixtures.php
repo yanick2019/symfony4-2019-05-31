@@ -14,7 +14,7 @@ class Propertyfixtures extends Fixture
         // $product = new Product();
         // $manager->persist($product);
         $faker = Factory::create('fr_FR');
-        for ($i = 0; $i  < 100; $i++) {
+         for ($i = 0; $i  < 100; $i++) {
             $property = new  Property();
             $property
                 ->setTitle($faker->word(10 , true))
@@ -28,7 +28,10 @@ class Propertyfixtures extends Fixture
                 ->setCity($faker->city)
                 ->setAddress($faker->address)
                 ->setPostalCode($faker->postcode)
-                ->setSold(false);
+                ->setSold(false)
+                ->setFilename('')
+                ->setUpdatedAt(   new \DateTime( '1976-00-00 00:00:00')  )
+                ;
             $manager->persist($property);
         }
 

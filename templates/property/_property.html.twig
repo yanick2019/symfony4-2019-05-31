@@ -1,3 +1,7 @@
+{% cache 'property' ~ property.id   property.updatedAt.timestamp %}
+    
+ {# property.updatedAt.timestamp 返回时间戳 #}
+
 <div class="card mb-4">
     {% if property.filename %}
         {% set imagePath = vich_uploader_asset(property,'imageFile')   %}
@@ -25,3 +29,4 @@
         </div>
     </div>
 </div>
+{% endcache %}
