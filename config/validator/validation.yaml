@@ -1,0 +1,8 @@
+App\Entity\Contact: # src/entityContact.php 
+    properties: 
+        phone: # src/entityContact.php  里的 phone 属性  
+          #  - NotBlank: {message: 'Cette valeur ne doit pas être vide.'} # 为空时 
+           # - Regex:
+           #     pattern: /\d{10}/  
+            #    message: message } # 正则 ... 
+                  

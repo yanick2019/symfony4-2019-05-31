@@ -7,6 +7,25 @@
             <a href="{{ path( 'admin.property.edit' , {id:property.id} )}}" class="btn btn-primary mt-4">editer ce biens
             </a>
         {% endif %}
+
+        <div class="text">
+            {% for flash_message in app.session.flashBag.get('success') %}
+                <div class="alert alert-success">
+                    {{ flash_message }}
+                </div>
+            {% endfor %}
+
+
+            {% if  not form.vars.valid %}
+                <div class="alert alert-danger">
+                    Erreur de danger
+                </div>
+            {% endif %}
+
+
+        </div>
+
+
     </div>
 
     <div class="jumbotron">
@@ -35,7 +54,27 @@
                             ㎡</h2>
                         <div class="text-danger" style="font-weight:bold;font-size:2rem; ">{{ property.formattedPrice  }}
                             €</div>
-                        <a class="btn btn-primary" href="#">Contater l'agence</a>
+
+
+                        <a class="btn btn-primary" data-target="#contactForm" data-toggle="collapse" href="#">Contater l'agence</a>
+                        <div class="mt-4  collapse  {% if  true == show_form  %}  show {% endif %} " id="contactForm">
+                            {{ form_start(form)}}
+                            <div class="row">
+                                <div class="col">{{ form_row(form.firstname)}}</div>
+                                <div class="col">{{ form_row(form.lastname)}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col">{{ form_row(form.email)}}</div>
+                                <div class="col">{{ form_row(form.phone)}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col">{{ form_rest(form)}}</div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary">Envoyer</button>
+                            </div>
+                            {{ form_end(form)}}
+                        </div>
 
                     </div>
                 </div>

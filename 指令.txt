@@ -1,0 +1,15 @@
+		查看翻译情况	 php bin/console debug:translation fr
+		
+		
+	 卸载组件  
+	 composer remove packageauthor/liip/imagine-bundle --update-with-dependencies
+	 
+	 清理缓存php bin/console  cache:clear
+	 
+下载测试邮件服务器
+	https://github.com/rnwood/smtp4dev/releases/tag/3.1.0-ci0552
+	解压缩  运行Rnwood.Smtp4dev.exe(就在第一级文件) 
+	打开http://localhost:5000/ 测试收件箱
+	设置.env 
+		MAILER_URL=smtp://localhost:25
+	  

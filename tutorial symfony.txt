@@ -21,6 +21,7 @@ vscode emmet支持twig
 }
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 指令 教程
+	 
 
 
   public function index( ):Response
@@ -62,10 +63,7 @@ vscode emmet支持twig
 	 $user = new User();
 	 $this->encoder->encodePassword(  $user , 'demo'); #加密
 	 <<<<<<<<
-	 卸载组件 (没测试过 只是在网上找的教程 )
-	 composer remove packageauthor/liip/imagine-bundle --update-with-dependencies
-	 
-	 清理缓存php bin/console  cache:clear
+
 	 
 	<<<<<<<<<<<<<
 	返回老的数据库结构
@@ -625,11 +623,21 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 					    App\Listener\ImageCacheSubscriber:
 						tags: 
 						- { name: doctrine.event_subscriber }
+						
+
+# Formulaire de contact		
+	创建entity  //src/entity/Contact.php  #这个不需要插入数据库的
+		type     src/form/ContactType.php
 				
 		
 
 
-
+下载测试邮件服务器
+	https://github.com/rnwood/smtp4dev/releases/tag/3.1.0-ci0552
+	解压缩  运行Rnwood.Smtp4dev.exe(就在第一级文件) 
+	打开http://localhost:5000/ 测试收件箱
+	设置.env 
+		MAILER_URL=smtp://localhost:25
 		
 		
 				

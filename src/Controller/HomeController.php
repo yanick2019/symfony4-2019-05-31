@@ -10,6 +10,10 @@ use Twig\Environment;
 use App\Repository\PropertyRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Property;
+use App\Entity\Contact;
+use App\Form\ContactType;
+use Symfony\Component\HttpFoundation\Request  ;
+use App\Notification\ContactNotification;
 
 class HomeController extends AbstractController
 {
@@ -63,9 +67,14 @@ class HomeController extends AbstractController
       * @return Response
       */
 
-     public function show(  Property $property ,    string $slug , int $id  ): Response
+     public function show(Property $property,    string $slug, int $id, Request  $request ,ContactNotification $contactNotification ): Response
      {
-         // $property = $this->repository->find($id);
+
+
+
+
+
+          // $property = $this->repository->find($id);
           # $property 是通过传入的{id} 从数据库获得的数据 
 
           /*  
@@ -74,20 +83,49 @@ class HomeController extends AbstractController
           $slug # $_GET 进来的数据
           
           */
-          
+
           # 如果 传入的slug和数据库的slug不同,则重新定向 
-          if ( $property &&   $property->getSlug() !== $slug) {
+          if ($property &&   $property->getSlug() !== $slug) {
                return $this->redirectToRoute(
                     'property.show', #  route name = property.show 
                     [
                          'id' => $property->getId(),      # 令id= 数据库的id
                          'slug' => $property->getSlug(),  # slug= 数据库的slug
-                         'options' => $property->getOptions() , 
+                         'options' => $property->getOptions(),
+
                     ],
                     301
                );
           }
-           /*
+
+          $contact = new Contact;
+          $contact->setProperty($property);
+          $form = $this->createForm(ContactType::class, $contact);
+          $form->handleRequest($request);
+
+          $show_form = false ; 
+          if ( $form->isSubmitted() && $form->isValid() ) 
+          {
+
+               $contactNotification->notify($contact ) ;
+               $this->addFlash('success', "Merci de votre contacte");
+               /* return $this->redirectToRoute(
+                    'property.show', #  route name = property.show 
+                    [
+                         'id' => $property->getId(),      # 令id= 数据库的id
+                         'slug' => $property->getSlug(),  # slug= 数据库的slug
+ 
+                    ],
+                    
+               ); */
+          }
+          else
+          {
+               $this->addFlash('success', "Erreur"); 
+               $show_form = true    ; 
+          }
+
+          /*
           # 把 Property $property 放入参数里public function show(Property $property ) , 会自动调用 $this->repository->find($id);   查找数据获得property
 
             public function show(  string $slug , int $id ): Response
@@ -102,6 +140,8 @@ class HomeController extends AbstractController
                [
                     'property' => $property,
                     'current_menu' => 'properties',
+                    'form' => $form->createView(),
+                    'show_form' => $show_form ,
                ]
           );
      }
