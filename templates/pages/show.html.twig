@@ -16,7 +16,7 @@
             {% endfor %}
 
 
-            {% if  not form.vars.valid %}
+            {% if  form.vars.submitted and not form.vars.valid %}
                 <div class="alert alert-danger">
                     Erreur de danger
                 </div>
@@ -57,7 +57,7 @@
 
 
                         <a class="btn btn-primary" data-target="#contactForm" data-toggle="collapse" href="#">Contater l'agence</a>
-                        <div class="mt-4  collapse  {% if  true == show_form  %}  show {% endif %} " id="contactForm">
+                        <div class="mt-4  collapse  {% if form.vars.submitted and not form.vars.valid  %}  show {% endif %} " id="contactForm">
                             {{ form_start(form)}}
                             <div class="row">
                                 <div class="col">{{ form_row(form.firstname)}}</div>

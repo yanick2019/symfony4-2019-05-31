@@ -93,8 +93,7 @@ class HomeController extends AbstractController
                          'slug' => $property->getSlug(),  # slug= 数据库的slug
                          'options' => $property->getOptions(),
 
-                    ],
-                    301
+                    ],  301
                );
           }
 
@@ -103,7 +102,7 @@ class HomeController extends AbstractController
           $form = $this->createForm(ContactType::class, $contact);
           $form->handleRequest($request);
 
-          $show_form = false ; 
+        
           if ( $form->isSubmitted() && $form->isValid() ) 
           {
 
@@ -119,11 +118,7 @@ class HomeController extends AbstractController
                     
                ); */
           }
-          else
-          {
-               $this->addFlash('success', "Erreur"); 
-               $show_form = true    ; 
-          }
+          
 
           /*
           # 把 Property $property 放入参数里public function show(Property $property ) , 会自动调用 $this->repository->find($id);   查找数据获得property
@@ -141,8 +136,7 @@ class HomeController extends AbstractController
                     'property' => $property,
                     'current_menu' => 'properties',
                     'form' => $form->createView(),
-                    'show_form' => $show_form ,
-               ]
+                ]
           );
      }
 

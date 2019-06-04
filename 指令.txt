@@ -12,4 +12,6 @@
 	打开http://localhost:5000/ 测试收件箱
 	设置.env 
 		MAILER_URL=smtp://localhost:25
-	  
+
+开启 encore js/css 服务器 
+		npm run dev-server   
