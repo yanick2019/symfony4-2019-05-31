@@ -52,9 +52,13 @@ class Property
      * @var File
      * @Assert\Image( mimeTypes={"image/jpeg" ,   "image/jpg" ,  "image/gif",   "image/bmp",  "image/png" } )
      */
-    private $imageFile;
-    #  代表 #config/packages/vich_uploader.yaml 中 mappings: property_image:
+
+     #  代表 #config/packages/vich_uploader.yaml 中 mappings: property_image:
     # filename 代表 本类的 $filename
+
+    private $imageFile;
+    
+   
 
  
 
@@ -133,23 +137,26 @@ class Property
      * @ORM\Column(type="datetime")
      */
     private $updated_at;
-     
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Picture", mappedBy="Property")
+     */
+   // #所有者用inversedBy 非所有者用mappedBy 结果就是查数据时会 找表 所有者_非所有者 如 table property_option 
+    private $pictures;
 
     public function __construct()
     {
-
-
-        $this->created_at = new \DateTime(); # 不加斜杠会出错
-        $this->sold = false;
-        $this->options = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
     }
+
+   
 
 
     public function getId(): ?int
     {
         return $this->id;
     }
+    
 
     public function getTitle(): ?string
     {
@@ -366,6 +373,7 @@ class Property
     {
         return $this->imageFile;
     }
+   
 
      /**
      * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
@@ -394,6 +402,7 @@ class Property
         }
         return $this;
     }
+  
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
@@ -406,4 +415,37 @@ class Property
 
         return $this;
     }
+
+    /**
+     * @return Collection|Picture[]
+     */
+    public function getPictures(): Collection
+    {
+        return $this->pictures;
+    }
+
+    public function addPicture(Picture $picture): self
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures[] = $picture;
+            $picture->setProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Picture $picture): self
+    {
+        if ($this->pictures->contains($picture)) {
+            $this->pictures->removeElement($picture);
+            // set the owning side to null (unless already changed)
+            if ($picture->getProperty() === $this) {
+                $picture->setProperty(null);
+            }
+        }
+
+        return $this;
+    }
+
+  
 }

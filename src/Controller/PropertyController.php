@@ -16,6 +16,9 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use App\Entity\propertySearch;
 use App\Form\PropertySearchType;
 
+ 
+
+
 class PropertyController extends AbstractController
 {
     /**
@@ -43,6 +46,9 @@ class PropertyController extends AbstractController
     {
         #用use Knp\Component\Pager\PaginatorInterface; 分页
 
+ 
+
+
 
         #建立表
         $search = new propertySearch();
@@ -51,15 +57,15 @@ class PropertyController extends AbstractController
 
         $form->handleRequest($request); # 获取$_GET的数据并把这些数据赋值给 $search ;
 
-       
-         //   $resultCount = $this->repository->findAllVisibleQuery($search)->getResult();
+
+        //   $resultCount = $this->repository->findAllVisibleQuery($search)->getResult();
         //    $pageCount = count($resultCount);
 
 
         $pageCount =  $this->repository->findCount($search);
-     
+
         #$this->findData() ;
-        $limit = 36 ;
+        $limit = 36;
         $query = $this->repository->findAllVisibleQuery($search);
 
 

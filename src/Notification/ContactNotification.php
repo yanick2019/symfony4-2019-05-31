@@ -35,4 +35,6 @@ class ContactNotification
             ]),'text/html') ;
             $this->mailer->send( $message );
     }
+   
+
 }

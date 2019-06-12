@@ -1,5 +1,27 @@
-{% cache 'property' ~ property.id   property.updatedAt.timestamp %}
+  
+  
+  
+  
+  {% cache 'property' ~ property.id    900    %}    
     
+  {#
+   {% cache 'property' ~ property.id    900秒    %} 
+    
+   services.yaml 
+    #载入缓存所需
+    Twig\CacheExtension\CacheProviderInterface:
+        class: Twig\CacheExtension\CacheProvider\PsrCacheAdapter    
+
+        
+    Twig\CacheExtension\CacheStrategyInterface:
+        class: Twig\CacheExtension\CacheStrategy\LifetimeCacheStrategy
+
+    Twig\CacheExtension\Extension:  ## class 
+        tags:
+        - { name: twig.extension }
+
+  
+  #}
  {# property.updatedAt.timestamp 返回时间戳 #}
 
 <div class="card mb-4">
@@ -11,13 +33,13 @@
     {# <img alt="" class="card-img-top" src="/images/properties/{{property.filename}}" style="width:100%;height:auto;"> #}
     <a href="{{path('property.show' , {slug:property.slug,id:property.id } )}}">
         <img alt="" class="card-img-top" src="{{ imagePath | imagine_filter('thumb')  }}" style="width:100%;height:232px;">
-    </a>
+     </a>
 
 
     <div class="card-body">
 
         <h4 class="card-title">
-            <a href="{{path('property.show' , {slug:property.slug,id:property.id } )}}">{{ property.title }}</a>
+            <a href="{{path('property.show' , {slug:property.slug,id:property.id } )}}">  {{ property.title }}  {#  {{ property.updatedAt.timestamp | date("d/m/Y") }}  #} </a>
         </h4>
         {#   <p class="card-text">{{property.description|nl2br}}</p> #}
         <p class="card-text">{{property.surface}}
@@ -29,4 +51,5 @@
         </div>
     </div>
 </div>
-{% endcache %}
+
+   {% endcache %}    

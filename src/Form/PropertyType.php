@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use App\Entity\Picture;
 
 class PropertyType extends AbstractType
 {
@@ -26,7 +27,7 @@ class PropertyType extends AbstractType
             ->add('floor')
             ->add('price')
             #给form加select标签
-            ->add('heat', ChoiceType::class, ['choices' => $this->getChoices()]) # 相当于 html 的select -- option 
+            ->add('heat', ChoiceType::class, ['choices' => $this->getChoices()  ]) # 相当于 html 的select -- option 
             // ->add('city',null,['label'=>'Ville']) #把文字city替换为ville
             ->add('options', EntityType::class, [
                 'class' => Option::class,
@@ -35,12 +36,17 @@ class PropertyType extends AbstractType
                 'multiple' => true, #use App\Entity\Option;
 
             ])
-            ->add('imageFile', FileType::class, ['required' => false])
+             
+
+           // ->add('imageFile', FileType::class, ['required' => false    ])
+            
+          //  ->add('picFile', FileType::class, ['required' => false , 'constraints' => array( new Picture() ),   ])
+            
             ->add('city')
             ->add('address')
             ->add('postal_code')
             ->add('sold')
-            ->add('created_at')
+            //->add('created_at')
              
             #https://symfony.com/doc/current/forms.html#choice-fields
         ;

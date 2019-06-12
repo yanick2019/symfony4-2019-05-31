@@ -9,11 +9,12 @@ namespace App\Controller\Admin;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\PropertyRepository;
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Property;
 use App\Form\PropertyType;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
 use App\DataFixtures\Propertyfixtures ;
   
 
@@ -77,9 +78,7 @@ class AdminPropertyController extends AbstractController
     {
         /*  $option = new Option();
         $property->addOption($option); */
-
-
-
+  
         $form =  $this->createForm(PropertyType::class, $property); # load $property  that  id  = { id } 
 
         # 接受 request 来的数据 包括get post 要先载入use Symfony\Component\HttpFoundation\Request; 
@@ -100,10 +99,10 @@ class AdminPropertyController extends AbstractController
             # 如果$property 不是当前方法的参数则需要加 $this->em->persist($property);
             $this->em->flush();
             $this->addFlash('success', 'Bien modifie avec succes');
-            /*
             
-            return $this->redirectToRoute("admin.property.index");
-            */
+            
+           # return $this->redirectToRoute("admin.property.index");
+             
         }
 
 

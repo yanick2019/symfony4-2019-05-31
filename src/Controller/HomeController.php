@@ -106,7 +106,8 @@ class HomeController extends AbstractController
           if ( $form->isSubmitted() && $form->isValid() ) 
           {
 
-               $contactNotification->notify($contact ) ;
+               $contactNotification->notify( $contact ) ;
+
                $this->addFlash('success', "Merci de votre contacte");
                /* return $this->redirectToRoute(
                     'property.show', #  route name = property.show 
