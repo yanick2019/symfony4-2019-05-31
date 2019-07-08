@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
- 
+use App\Entity\Picture ;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PropertyRepository")
@@ -143,6 +143,12 @@ class Property
      */
    // #所有者用inversedBy 非所有者用mappedBy 结果就是查数据时会 找表 所有者_非所有者 如 table property_option 
     private $pictures;
+
+    /**
+     * @var Picture|null
+     */
+    private $picture ;
+
 
     public function __construct()
     {
@@ -445,6 +451,15 @@ class Property
         }
 
         return $this;
+    }
+    public function getPicture(): ?Picture
+    {
+        return $this->picture ;
+    }
+    public function setPicture(Picture $picture ): self
+    {
+        $this->picture = $picture ;
+        return $this ;
     }
 
   

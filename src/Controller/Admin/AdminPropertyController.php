@@ -78,6 +78,8 @@ class AdminPropertyController extends AbstractController
     {
         /*  $option = new Option();
         $property->addOption($option); */
+
+        
   
         $form =  $this->createForm(PropertyType::class, $property); # load $property  that  id  = { id } 
 

@@ -4,7 +4,7 @@ security:
         from_database:
                 entity:
                     class: App\Entity\User
-                    property: username #通过username管理
+                    property: username # 这里username对应src/Controller/SecurityController.php::index() => getLastUsername() 而且一定要写 username
 
 
     firewalls:
@@ -14,15 +14,25 @@ security:
         main:
             anonymous: true
             #http_basic: true 
+            #查看安全策略参数 php bin/console config:dump-reference security
             form_login: 
+                #https://symfony.com/doc/current/reference/configuration/security.html
                 #true  # true 可写可不写 只要form_login 没被注释 当访问/admin 且不是ROLE_ADMIN 则会要求需要登录
-                check_path: /login 
-                #login_path: /mylogin  #自定义为登录跳转页面 查看安全策略参数 php bin/console config:dump-reference security
+                check_path: /login # 登录表单提交到的页面
+                login_path: /login  # 默认登录页面 到需要权限的页面时,却未登录说跳转的页面
+                default_target_path:  /  # 登录页面没有前一页时 登录成功跳转的路由 否则跳转到登录页的前一页 
+                #always_use_default_target_path: true # 就算有登录页面有前一页 ,还是跳至default_target_path
+ 
+                use_forward: true  
+                failure_path: /login # 登录失败后跳转的页面 默认是和登录页面相同 login
+ 
             
-            # 当访问/logout时会退出登录 需要设置 config/routes.yaml
             logout:
-                path: /logout
+                path: /logout # 当访问这个路径 会自动会出登录 ,不用任何代码操作 要先在  config/routes.yaml设置
                 target: /
+            
+            # 自定义禁止访问页面
+            access_denied_handler: App\Security\AccessDeniedHandler  
 
 
             # activate different ways to authenticate
@@ -35,9 +45,19 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN } # admin 这个页面只允许ROLE_ADMIN
+        # - { path: ^/admin, roles: [ROLE_ADMIN, ROLE_TEACHER] }
+
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        #- { path: ^/admin, roles: ROLE_USER_IP, ip: 127.0.0.1 }
+        #- { path: ^/admin, roles: ROLE_USER_PORT, ip: 127.0.0.1, port: 8080 }
+        #- { path: ^/admin, roles: ROLE_USER_HOST, host: symfony\.com$ }
+        #- { path: ^/admin, roles: ROLE_USER_METHOD, methods: [POST, PUT] }
+        #- { path: ^/admin, roles: ROLE_USER }
     
+
+
+
     encoders:
         #App\Entity\User: plaintext   #plaintext: 不加密密码  
         App\Entity\User:

@@ -29,6 +29,14 @@ class User implements UserInterface, \Serializable
      */
     private $password;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
+
+ 
+   
+
     public function getId(): ?int
     {
         return $this->id;
@@ -58,6 +66,9 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
+     
+
+    
     /**
      *  Returns the roles granted to the user.
      *  
@@ -73,7 +84,12 @@ class User implements UserInterface, \Serializable
      */
     public function getRoles()
     {
-        return ['ROLE_ADMIN'];
+        $role = $this->getRole();
+        $roles = [] ;
+       // return ['ROLE_ADMIN'];
+        $roles[] = $role ;
+
+        return array_unique($roles);
     }
 
     /**
@@ -129,6 +145,18 @@ class User implements UserInterface, \Serializable
             $this->username,
             $this->password
         ) = unserialize($serialized,['allowed_classes' => false ]);
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
+
+        return $this;
     }
 
 }

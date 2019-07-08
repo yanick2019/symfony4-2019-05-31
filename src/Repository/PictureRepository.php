@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Picture;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 /**
  * @method Picture|null find($id, $lockMode = null, $lockVersion = null)
@@ -27,6 +29,40 @@ class PictureRepository extends ServiceEntityRepository
             ->setParameter('val', $propertyId)
             ->getQuery()
             ->getResult();
+    }
+    /**
+     * @param Property[] $properties
+     * @return ArrayCollection
+     */
+    public function findPicForProperty( array $properties  ) 
+    {
+        $qb = $this->createQueryBuilder('p');
+        $pictures = $qb
+            ->select('p')
+            ->where(
+                $qb->expr()->in(
+                    'p.id',
+                    $this->createQueryBuilder('p2')
+                        ->select('Max(p2.id)')
+                        ->where('p2.Property IN (:properties)')
+                        ->groupBy('p2.Property')
+                        ->getDQL()
+                )
+
+            )
+            ->getQuery()
+            ->setParameter('properties', $properties)
+            ->getResult();
+
+            $pictures = array_reduce($pictures , function( $arr , Picture $picture){
+                 $arr[ $picture->getProperty()->getId() ] = $picture ;
+                 return $arr ; 
+
+            }   ) ;
+            
+          
+            return new ArrayCollection( $pictures ) ;
+
     }
 
 

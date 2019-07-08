@@ -14,7 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\PropertyRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Property;
- /**
+
+/**
  * @Route("/picture")
  */
 class PictureController extends AbstractController
@@ -50,7 +51,7 @@ class PictureController extends AbstractController
     /**
      * @Route("/new/", name="picture_new", methods={"GET","POST"}  )
      */
-    public function new(Request $request , PictureRepository $pictureRepository)
+    public function new(Request $request, PictureRepository $pictureRepository)
     {
         $picture = new Picture();
         $form = $this->createForm(PictureType::class, $picture);
@@ -62,14 +63,13 @@ class PictureController extends AbstractController
         # 准备函数然后 插入数据库
 
 
-       
-        
+
+
 
         //    print_r( $picture ) ; exit;
         // $data = $request->request->get('request'); 
 
-        if ($id)
-         {
+        if ($id) {
             $property = $this->repository->find($id);
 
             if (null === $property) {
@@ -77,8 +77,7 @@ class PictureController extends AbstractController
             }
             /* $pp = new Property() ;
             $pp->setId($id); */
-            $picture->setProperty( $property ) ;
-
+            $picture->setProperty($property);
         }
 
         if ($form->isSubmitted()) {
@@ -89,29 +88,32 @@ class PictureController extends AbstractController
             $this->em->flush();
             //return new Response(json_encode('ffffff'));
             //  return $this->redirectToRoute('picture_index');
-            // $id = $picture->getId(); last id 
+              $last_id  = $picture->getId();  //  last id 
 
-            if( $picture->getId() ) $pictures = $pictureRepository->findPropertyId($id);
+            if ($last_id ) $pictures = $pictureRepository->findPropertyId($id);
 
-            foreach( $pictures as $picture )
-            {
-                $files[] = "/images/properties/" .$picture->getPath();
+            foreach ($pictures as $picture) {
+                $files[] = "/images/properties/" . $picture->getPath();
+
             }
-             
         }
 
-      /*   return $this->render('picture/new.html.twig', [
+        /*   return $this->render('picture/new.html.twig', [
             'picture' => $picture,
             'form' => $form->createView(),
         ]); */
 
-           return new Response(json_encode([
-            'files' => $files ,
-            
+        $tokenProvider = $this->container->get('security.csrf.token_manager');
+        $token = $tokenProvider->getToken('delete'.$last_id )->getValue();
+
+        return new Response(json_encode([
+            'files' => $files,
+            'id' => $last_id , 
+            'csrf_token' =>$token ,
+
 
 
         ]));
-        
     }
 
     /**
@@ -147,16 +149,41 @@ class PictureController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="picture_delete", methods={"DELETE"})
+     * @Route("/delete", name="picture_delete", methods={"POST"}   )
+     * 
+     * 
+     * 
      */
-    public function delete(Request $request, Picture $picture): Response
+    // 默认 @Route("/delete", name="picture_delete", methods={"DELETE"}   )
+    public function delete(Request $request , PictureRepository $repository ): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $picture->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($picture);
-            $entityManager->flush();
+        $error = 0 ;
+        $id = (int)$request->get('id');
+        
+
+        $picture = $repository->find($id);
+        $msgs['error'] = '';
+        if ($id &&  $picture) {
+            if ($this->isCsrfTokenValid('delete' . $picture->getId(), $request->request->get('_token'))) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($picture);
+                $entityManager->flush();
+                  
+            } else {
+                $error = 'error';
+            }
+        }
+        else
+        {
+            $error = 'no id ';
         }
 
-        return $this->redirectToRoute('picture_index');
+        if (  0 !=  $error) $msgs['error'] = $error;
+        //  return $this->redirectToRoute('picture_index'); 
+
+        return new Response(json_encode([
+            "msgs" => $msgs,
+
+        ]));
     }
 }

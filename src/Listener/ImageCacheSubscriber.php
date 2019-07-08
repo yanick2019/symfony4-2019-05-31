@@ -45,8 +45,8 @@ class ImageCacheSubscriber implements EventSubscriber
     {
         #返回一个实体
         $entity = $args->getEntity();
+
         # 如果不是property实体 则不操作
-         
         if (!$entity instanceof  Property ) { 
             return;
         }

@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Property;
 use App\Entity\Contact;
 use App\Form\ContactType;
-use Symfony\Component\HttpFoundation\Request  ;
+use Symfony\Component\HttpFoundation\Request;
 use App\Notification\ContactNotification;
 
 class HomeController extends AbstractController
@@ -67,10 +67,8 @@ class HomeController extends AbstractController
       * @return Response
       */
 
-     public function show(Property $property,    string $slug, int $id, Request  $request ,ContactNotification $contactNotification ): Response
+     public function show(Property $property,    string $slug, int $id, Request  $request, ContactNotification $contactNotification): Response
      {
-
-
 
 
 
@@ -93,7 +91,8 @@ class HomeController extends AbstractController
                          'slug' => $property->getSlug(),  # slug= 数据库的slug
                          'options' => $property->getOptions(),
 
-                    ],  301
+                    ],
+                    301
                );
           }
 
@@ -102,11 +101,10 @@ class HomeController extends AbstractController
           $form = $this->createForm(ContactType::class, $contact);
           $form->handleRequest($request);
 
-        
-          if ( $form->isSubmitted() && $form->isValid() ) 
-          {
 
-               $contactNotification->notify( $contact ) ;
+          if ($form->isSubmitted() && $form->isValid()) {
+
+               $contactNotification->notify($contact);
 
                $this->addFlash('success', "Merci de votre contacte");
                /* return $this->redirectToRoute(
@@ -119,7 +117,7 @@ class HomeController extends AbstractController
                     
                ); */
           }
-          
+
 
           /*
           # 把 Property $property 放入参数里public function show(Property $property ) , 会自动调用 $this->repository->find($id);   查找数据获得property
@@ -137,7 +135,7 @@ class HomeController extends AbstractController
                     'property' => $property,
                     'current_menu' => 'properties',
                     'form' => $form->createView(),
-                ]
+               ]
           );
      }
 

@@ -35,13 +35,20 @@
                 <div class="row">
                     <div class="col-md-8">
 
-                        {% if property.filename %}
-                            {% set imagePath = vich_uploader_asset(property,'imageFile') %}
+                        {% if property.pictures %}
+
+                            {% for picture in property.pictures  %}
+
+                                <img alt="" class="card-img-top" src="{{ vich_uploader_asset(picture ,'picFile') | imagine_filter('meduim') }}" style="width:100%;height:auto;">
+
+                            {% endfor %}
                         {% else %}
+                        
                             {% set imagePath =  '/images/properties/villaeco_2_chambrs__garage__066686800_1112_31102017.jpg' %}
+                            <img alt="" class="card-img-top" src="{{ imagePath | imagine_filter('meduim') }}" style="width:100%;height:auto;">
+
                         {% endif %}
                         {# <img alt="" class="card-img-top" src="/images/properties/{{property.filename}}" style="width:100%;height:auto;"> #}
-                        <img alt="" class="card-img-top" src="{{ imagePath | imagine_filter('meduim') }}" style="width:100%;height:auto;">
 
 
                     </div>

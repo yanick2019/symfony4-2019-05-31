@@ -113,30 +113,7 @@ class PropertyRepository extends ServiceEntityRepository
 
 
 
-    /**
-     * @param Property[] $properties
-     * @return ArrayCollection
-     */
-    public function findForProperties(array $properties): ArrayCollection
-    {
-        $qb = $this->createQueryBuilder('p');
-        $pictures = $qb 
-        ->select('p')
-        ->where(
-            $qb->expr()->in(
-                'p.id',
-                $this->createQueryBuilder('p2')
-                ->select('Max(p2.id)')
-                ->where('p2.property IN (:properties)')
-                ->groupBy('p2.property')
-                ->getDQL()
-            )
-
-        )
-        ->getQuery()
-        ->setParameter('properties',$properties)
-        ->getResult();
-    }
+     
 
     // /**
     //  * @return Property[] Returns an array of Property objects

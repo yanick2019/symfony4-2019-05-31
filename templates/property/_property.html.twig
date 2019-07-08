@@ -2,8 +2,8 @@
   
   
   
-  {% cache 'property' ~ property.id    900    %}    
-    
+ {#  {% cache 'property' ~ property.id    900    %}    
+    #} 
   {#
    {% cache 'property' ~ property.id    900秒    %} 
     
@@ -25,16 +25,17 @@
  {# property.updatedAt.timestamp 返回时间戳 #}
 
 <div class="card mb-4">
-    {% if property.filename %}
-        {% set imagePath = vich_uploader_asset(property,'imageFile')   %}
+    {% if property.picture %}
+        {% set imagePath = vich_uploader_asset( property.picture ,'picFile')   %}
     {% else %}
         {% set imagePath =  '/images/properties/villaeco_2_chambrs__garage__066686800_1112_31102017.jpg' %}
     {% endif %}
     {# <img alt="" class="card-img-top" src="/images/properties/{{property.filename}}" style="width:100%;height:auto;"> #}
     <a href="{{path('property.show' , {slug:property.slug,id:property.id } )}}">
-        <img alt="" class="card-img-top" src="{{ imagePath | imagine_filter('thumb')  }}" style="width:100%;height:232px;">
+        <img alt="" class="card-img-top" src="{{ imagePath   | imagine_filter('thumb')  }}" style="width:100%;height:232px;">
      </a>
-
+ 
+          
 
     <div class="card-body">
 
@@ -52,4 +53,4 @@
     </div>
 </div>
 
-   {% endcache %}    
+  {#  {% endcache %}     #}

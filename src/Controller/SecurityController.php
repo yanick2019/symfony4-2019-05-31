@@ -19,9 +19,21 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils)
     {
-
+      
+      /** 
+       * config/packages/security.yaml
+       * providers:
+      *  from_database:
+       *         entity:
+       *             class: App\Entity\User
+       *             property: username # 这里username对应getLastUsername()
+       * 
+      */
+        
         $lastusername = $authenticationUtils->getLastUsername();
         $error = $authenticationUtils->getLastAuthenticationError();
+
+         
         return $this->render(
             'security/login.html.twig',
             [

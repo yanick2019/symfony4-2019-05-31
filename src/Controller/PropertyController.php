@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use App\Entity\propertySearch;
 use App\Form\PropertySearchType;
+use App\Repository\PictureRepository ;
 
  
 
@@ -30,12 +31,15 @@ class PropertyController extends AbstractController
      */
     private $em;
 
+    private $picRep ;
 
 
-    public function __construct(PropertyRepository $repository, ObjectManager $em)
+
+    public function __construct(PropertyRepository $repository, ObjectManager $em , PictureRepository $picRep  )
     {
         $this->repository =  $repository; # 引用src/Repository/PropertyRepository
         $this->em = $em;
+        $this->picRep = $picRep ;
     }
 
     /**
@@ -65,17 +69,31 @@ class PropertyController extends AbstractController
         $pageCount =  $this->repository->findCount($search);
 
         #$this->findData() ;
-        $limit = 36;
+        $limit = 36 ;
         $query = $this->repository->findAllVisibleQuery($search);
 
-
+        
 
         $properties = $paginator->paginate(
             $query, /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
             $limit  /*limit per page*/
         );
+        
+        if( count(  $properties->getItems() ) > 0 )
+        {
+            $pictures =  $this->picRep->findPicForProperty( $properties->getItems() );  
 
+            foreach( $properties as  $property )
+            {
+                if( $pictures->containsKey( $property->getId()))
+                {
+                    $property->setPicture($pictures->get( $property->getId() ));
+                }
+             }
+        }
+        
+ 
         # 这两句要放在$properties = $paginator->paginate( .... 的下面 否则  property/index.html.twig 里 knp_pagination_render(properties)  会失效
 
 
@@ -87,6 +105,7 @@ class PropertyController extends AbstractController
                 'form' => $form->createView(),
                 'properties' => $properties,
                 'current_menu' => 'properties', # 给视图文件传值 令 变量 current_menu = properties
+                 
             ]
         );
     }
