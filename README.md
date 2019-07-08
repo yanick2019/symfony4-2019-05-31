@@ -806,14 +806,17 @@ templates/
 ```
 ### 查看安全策略参数 php bin/console config:dump-reference security
 https://symfony.com/doc/current/reference/configuration/security.html
-
+```
 	 form_login:
             target_path_parameter: go_to
             failure_path_parameter: back_to
-	go_to , back_to 表示 登录页提交过来的post参数或是get参数 ?go_to=/dashboard&back_to=/forgot-password
+```
+go_to , back_to 表示 登录页提交过来的post参数或是get参数 ?go_to=/dashboard&back_to=/forgot-password
+
+```
 	<input type="hidden" name="go_to" value="{{ path('dashboard') }}" />
     <input type="hidden" name="back_to" value="{{ path('forgot_password') }}" />
-
+```
 ### 登录成功跳转页面
 
 默认是登录也的上一个地址
