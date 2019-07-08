@@ -776,6 +776,7 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 ```	 
 ### 重写错误页面 自定义page 404 ...
 测试地址 http://localhost:8000/index.php/_error/403/404/500
+
 创建文件
 ```
 templates/
@@ -805,6 +806,7 @@ templates/
 ```
 ### 查看安全策略参数 php bin/console config:dump-reference security
 https://symfony.com/doc/current/reference/configuration/security.html
+
 	 form_login:
             target_path_parameter: go_to
             failure_path_parameter: back_to
@@ -813,6 +815,7 @@ https://symfony.com/doc/current/reference/configuration/security.html
     <input type="hidden" name="back_to" value="{{ path('forgot_password') }}" />
 
 ### 登录成功跳转页面
+
 默认是登录也的上一个地址
 + 可以在登录表单里增加
  <input type="hidden" name="_target_path" value="{{ path('account') }}" /> 这个比下面的优先
