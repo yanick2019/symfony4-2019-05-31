@@ -5,4 +5,7 @@ App\Entity\Contact: # src/entityContact.php
            # - Regex:
            #     pattern: /\d{10}/  
             #    message: message } # 正则 ... 
-                  
+        #email:
+        #    - Email:
+        #        message: The email "{{ value }}" is not a valid email.
+                   

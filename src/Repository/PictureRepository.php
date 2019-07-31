@@ -53,15 +53,23 @@ class PictureRepository extends ServiceEntityRepository
             ->getQuery()
             ->setParameter('properties', $properties)
             ->getResult();
+         
+        $picturesArr = [] ;
+        if( count($pictures) > 0 )
+        {
+            $picturesArr = 
+            array_reduce($pictures , function( $arr , Picture $picture)
+            {
+                    $arr[ $picture->getProperty()->getId() ] = $picture ;
 
-            $pictures = array_reduce($pictures , function( $arr , Picture $picture){
-                 $arr[ $picture->getProperty()->getId() ] = $picture ;
-                 return $arr ; 
+                    return $arr ; 
 
             }   ) ;
-            
-          
-            return new ArrayCollection( $pictures ) ;
+        }    
+        
+        
+         
+         return new ArrayCollection( $picturesArr ) ;
 
     }
 

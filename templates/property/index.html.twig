@@ -24,7 +24,7 @@
 
                 </div>
             </div>
-
+{{ form_widget(form) }}
 
             {{ form_end(form)}}
         </div>
@@ -33,7 +33,7 @@
     <div class="container mt-4">
 
         <h1>Voir tous nos biens</h1>
-        <h4>{{ pageCount }}    biens trouve</h4>
+        <h4>  {{ properties.getTotalItemCount}}  biens trouve</h4>
         <div class="row">
             {% for property in properties %}
                 <div class="col-md-4">

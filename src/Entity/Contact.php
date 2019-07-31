@@ -30,7 +30,7 @@ class Contact
    * pattern="/\d{10}/"
    * )
    *   pattern 正则表达式
-   * 也可以在src/validation.yaml 里设置 两个地方只能设置一个 否则会弹出两个错误信息
+   * 也可以在config/validator/validation.yaml 里设置 两个地方只能设置一个 否则会弹出两个错误信息
    * 
    */
   private $phone ;

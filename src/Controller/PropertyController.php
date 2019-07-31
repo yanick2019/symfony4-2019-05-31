@@ -66,7 +66,7 @@ class PropertyController extends AbstractController
         //    $pageCount = count($resultCount);
 
 
-        $pageCount =  $this->repository->findCount($search);
+      //  $pageCount =  $this->repository->findCount($search);
 
         #$this->findData() ;
         $limit = 36 ;
@@ -90,24 +90,34 @@ class PropertyController extends AbstractController
                 {
                     $property->setPicture($pictures->get( $property->getId() ));
                 }
-             }
+             }  
         }
         
  
         # 这两句要放在$properties = $paginator->paginate( .... 的下面 否则  property/index.html.twig 里 knp_pagination_render(properties)  会失效
 
-
+  
         # 需要引用 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; 并继承 extends AbstractController
         return $this->render(
             "property/index.html.twig",
             [
-                'pageCount' => $pageCount,
+                 
                 'form' => $form->createView(),
                 'properties' => $properties,
                 'current_menu' => 'properties', # 给视图文件传值 令 变量 current_menu = properties
                  
             ]
         );
+    }
+	/**
+	* @Route("tmt")
+    */
+    public function ctat()
+    {
+        return $this->json([
+            ['name'=>'cats'],
+            ['name'=>'cats'],
+        ]);
     }
 
 
