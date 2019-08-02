@@ -12,7 +12,7 @@ class AccessDeniedHandler implements AccessDeniedHandlerInterface
     public function handle(Request $request, AccessDeniedException $accessDeniedException)
     {
          
-         $content = $accessDeniedException->getMessage();
+        $content = $accessDeniedException->getMessage();
         return new Response($content. "Connectez-Vous" );
     }
 }

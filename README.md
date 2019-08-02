@@ -74,12 +74,21 @@ elopment web server,
 	
 ### 启动symfony服务器 
 	先cd 到项目所在文件夹
-	php -S 127.0.0.1:8000 -t public
-	Press Ctrl-C to quit. 按ctrl-c 关闭symfony服务器
+```bash
 
-### 指令	
-	php bin/console 可获取各种指令语法
-	php bin/console server:run	获取指令后 应该这样输入
+	$ php -S 127.0.0.1:8000 -t public
+
+	$ php bin/console server:run 192.168.0.1:8080
+ 	$ php bin/console server:run *:8080
+	$ php bin/console server:run 0.0.0.0:8000
+
+	$ php bin/console 可获取各种指令语法
+	$ php bin/console server:run	获取指令后 应该这样输入
+	#Press Ctrl-C to quit. #按ctrl-c 关闭symfony服务器
+
+```
+ 	
+	
 	
 ### 找出route bug	 debug
 	php bin/console debug:router 查看所有路由
@@ -591,7 +600,7 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 	开启服务器 
 		npm run dev-server 
 	
-	# 如果在 *.html.twig 里加  <link href="{{ asset('build/app.css ')}}" rel="stylesheet">代表 assets/css/app.css 所以可以把所有css或js文件放到assets里
+	# 如果在 *.html.twig 里加  <link href="{{ asset('build/app.css')}}" rel="stylesheet">代表 assets/css/app.css 所以可以把所有css或js文件放到assets里
 	# 
 	# 同理  <script src="{{ asset('build/app.js')}}"></script>代表 assets/js/app.js 
 
@@ -615,19 +624,7 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 				
 		
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-			
-	
-
-
+		 
 
 
 
@@ -693,14 +690,7 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 	use Symfony\Component\Form\AbstractType ; #一定要这个 
 	class MyType extends AbstractType{....#按照其他type文件写法}
 ```
-			 
-	
-	
-	
-	
-	
-					
-				
+	 			
 
 ```
   public function index( ):Response
@@ -772,7 +762,7 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 ```
 	#自定义禁止访问页面
 	access_denied_handler: App\Security\AccessDeniedHandler 
-	# 建立文件 src\App\Security\AccessDeniedHandler.php
+	# 建立文件 src\Security\AccessDeniedHandler.php
 ```	 
 ### 重写错误页面 自定义page 404 ...
 测试地址 http://localhost:8000/index.php/_error/403/404/500
@@ -829,4 +819,94 @@ go_to , back_to 表示 登录页提交过来的post参数或是get参数 ?go_to=
             form_login:
                 # ...
                 default_target_path:  / #登录成功跳转路由  登录页面没有前一页时 登录成功跳转的路由 否则跳转到登录页的前一页    
- 
+
+### 提供默认参数
+
+为 src/Updates/SiteUpdateManager.php 提供默认参数 $adminEmail: 'manager@example.com'
+
+
+```yaml
+# config/services.yaml
+services:
+    # explicitly configure the service
+    App\Updates\SiteUpdateManager:
+        arguments:
+            $adminEmail: 'manager@example.com'
+``` 
+
+```php
+# src/Updates/SiteUpdateManager.php 
+public function __construct($adminEmail)
+    {
+       $this->adminEmail = $adminEmail;
+    }
+```
+
+```
+# config/services.yaml
+services:
+    # ...
+
+    # this is the service's id 自定义服务id 
+    site_update_manager.superadmin:
+		#调用的class名 src/Updates/SiteUpdateManager.php 
+        class: App\Updates\SiteUpdateManager
+        # you CAN still use autowiring: we just want to show what it looks like without
+        autowire: false
+        # manually wire all arguments
+		# 提供三个默认删除
+        arguments:
+            - '@App\Service\MessageGenerator'
+            - '@mailer'
+            - 'superadmin@example.com'
+
+    site_update_manager.normal_users:
+        class: App\Updates\SiteUpdateManager
+        autowire: false
+        arguments:
+            - '@App\Service\MessageGenerator'
+            - '@mailer'
+            - 'contact@example.com'
+
+	# 调用自定义服务id
+    # Create an alias, so that - by default - if you type-hint SiteUpdateManager,
+    # the site_update_manager.superadmin will be used
+    App\Updates\SiteUpdateManager: '@site_update_manager.superadmin' 
+  
+```
+
+### service tag 
+
+https://symfony.com/doc/current/service_container/tags.html
+
+方法一
+```
+# config/services.yaml
+services:
+	
+	# 需要自动加载的tag 放在_instanceof: 下面
+    # this config only applies to the services created by this file
+    _instanceof:
+        # services whose classes are instances of CustomInterface will be tagged automatically
+        App\Security\CustomInterface:
+            tags: ['app.custom_tag']
+    # ...
+``` 	
+
+方法二
+```
+// src/Kernel.php
+class Kernel extends BaseKernel
+{
+    // ...
+
+    protected function build(ContainerBuilder $container)
+    {
+        $container->registerForAutoconfiguration(CustomInterface::class)
+            ->addTag('app.custom_tag')
+        ;
+    }
+}
+```
+
+

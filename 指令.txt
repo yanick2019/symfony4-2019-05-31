@@ -15,4 +15,5 @@
 
 开启 encore js/css 服务器 
 		npm run dev-server   
-		
+	
+@Assert\Email(mode = "html5")

@@ -1,0 +1,37 @@
+  
+valider email
+@Assert\Email(mode = "html5")
+
+
+session
+
+public function sessionAction(SessionInterface $session){
+    // stocke un attribut pour une réutilisation ultérieure
+    $session->set('user_id', 100);
+    //obtient l'attribut défini par un autre contrôleur dans une autre requête
+    $user_id = $session->get('user_id');  
+}
+
+request 
+// $_GET parameters
+$request->query->get('name');
+
+// $_POST parameters
+$request->request->get('name');
+
+
+7. Dans une classe donnée, comment supprimer automatiquement tous les objets enfants si l’objet parent est supprimé?
+/**
+* @OneToMany(targetEntity="Page", mappedBy="blog", cascade={"remove"})
+*/
+protected $pages;
+
+twig写法 
+<?php
+for ($i=0; $i < count($products); $i++) {
+}
+?>
+=
+{% for i in 0..products|length %}
+    
+{% endfor %}

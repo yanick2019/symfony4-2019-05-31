@@ -33,6 +33,7 @@ services:
 #        arguments:
 #            $twig: "@twig"
 
+    # 自定义服务 用来监听图片删除和更新
     App\Listener\ImageCacheSubscriber:
         tags: 
         - { name: doctrine.event_subscriber }
