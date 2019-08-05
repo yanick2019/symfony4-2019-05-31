@@ -18,6 +18,7 @@ use App\Entity\Picture ;
  * @ORM\Entity(repositoryClass="App\Repository\PropertyRepository")
  * @Vich\Uploadable
  */
+# https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/annotations-reference.html
 class Property
 {
     const HEAT =
@@ -139,9 +140,13 @@ class Property
     private $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Picture", mappedBy="Property")
+     * @ORM\OneToMany(targetEntity="App\Entity\Picture", mappedBy="Property" , orphanRemoval=true , cascade={ "persist" } , fetch="LAZY")
      */
-   // #所有者用inversedBy 非所有者用mappedBy 结果就是查数据时会 找表 所有者_非所有者 如 table property_option 
+   // #所有者用inversedBy 非所有者用mappedBy 结果就是查数据时会 找表 所有者_非所有者 如 table property_option
+   # fetch="EAGER" 马上载入, fetch="LAZY" 只有当调用时载入,如 $cart->getItems()
+   # orphanRemoval=true 时 当删除property, picture 也会被删除
+   # cascade = all persist(持久化) remove(删除时 外键删除)  detach(分离) 相当于外键的  ... on update cascade on delete cascade 
+   # https://stackoverflow.com/questions/24612664/understanding-doctrine-cascade-operations
     private $pictures;
 
     /**

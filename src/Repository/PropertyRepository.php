@@ -73,11 +73,19 @@ class PropertyRepository extends ServiceEntityRepository
 
         /*     return $this->createQueryBuilder('p') ## 定义表property缩写为 p
             ->where('p.sold = 0 ') #where #flase = 0 
-            
+
+
+            # $em instanceof EntityManager
+            # example1: creating a QueryBuilder instance
+            # 如果 不是在某个entity定义则需要提供表名
+            # $qb = $em->createQueryBuilder()->select('p')->from("Property","p");
+
+
+
             ->andWhere('p.exampleField = :val') #where 
             ->setParameter('val', $value)
             ->orderBy('p.id', 'ASC')
-            
+            ->setFirstResult( $offset )
             ->setMaxResults(30) # limit 
             ->getQuery(); */
     }
@@ -107,7 +115,7 @@ class PropertyRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             // ->select('p', 'pics')
-            // ->leftJoin('p.pitures', 'pics')
+            // ->leftJoin('p.pitures', 'pics') // = " LEFTJOIN pictures as pics "
             ->where($sqlWhere);
     }
 

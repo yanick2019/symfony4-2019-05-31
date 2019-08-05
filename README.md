@@ -66,6 +66,8 @@ elopment web server,
   src  操作php代码
   templates 操作前端
 
+  
+
 ### 配置mysql所需用户名和密码
 	根目录 .env文件
 		DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name 改为
@@ -609,7 +611,11 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 
 #安装缓存cache 这样就不用每次搜索数据库了
 
+	https://github.com/twigphp/twig-cache-extension 
+
 	$ composer require twig/cache-extension 
+	
+	使用缓存:
 	在config/services.yaml 写入代码
 		 #载入缓存所需
 			Twig\CacheExtension\CacheProviderInterface:
@@ -620,8 +626,26 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 			Twig\CacheExtension\Extension:
 				tags:
 				- { name: twig.extension }
-	修改			
-				
+
+	或者 : 
+	use Twig\CacheExtension\CacheProvider\PsrCacheAdapter;
+	use Twig\CacheExtension\CacheStrategy\LifetimeCacheStrategy;
+	use Twig\CacheExtension\Extension as CacheExtension;
+	use Cache\Adapter\Apcu\ApcuCachePool;
+
+	$cacheProvider  = new PsrCacheAdapter(new ApcuCachePool());
+	$cacheStrategy  = new LifetimeCacheStrategy($cacheProvider);
+	$cacheExtension = new CacheExtension($cacheStrategy);
+
+	$twig->addExtension($cacheExtension);
+
+
+	修改 templates\property\_property.html.twig		
+		
+		{% cache 'property' ~ property.id    900    %} 
+
+			.....
+		{% endcache %}
 		
 				
 		 
@@ -768,6 +792,7 @@ form 视图文件C:\htdocs\symfony\MaSuperAgence\vendor\symfony\twig-bridge\Reso
 测试地址 http://localhost:8000/index.php/_error/403/404/500
 
 创建文件
+
 ```
 templates/
 └─ bundles/
@@ -779,9 +804,11 @@ templates/
          ├─ error404.json.twig
          ├─ error403.json.twig
          └─ error.json.twig      # All other JSON errors (including 500)
-```		 
+```	
+
 各种错误样式
-```
+
+```twig
 {# templates/bundles/TwigBundle/Exception/error404.html.twig #}
 {% extends 'base.html.twig' %}
 
@@ -794,16 +821,18 @@ templates/
     </p>
 {% endblock %}		 
 ```
+
 ### 查看安全策略参数 php bin/console config:dump-reference security
 https://symfony.com/doc/current/reference/configuration/security.html
+```yaml
+form_login:
+	target_path_parameter: go_to
+	failure_path_parameter: back_to
 ```
-	 form_login:
-            target_path_parameter: go_to
-            failure_path_parameter: back_to
-```
+
 go_to , back_to 表示 登录页提交过来的post参数或是get参数 ?go_to=/dashboard&back_to=/forgot-password
 
-```
+```html
 	<input type="hidden" name="go_to" value="{{ path('dashboard') }}" />
     <input type="hidden" name="back_to" value="{{ path('forgot_password') }}" />
 ```
@@ -842,7 +871,7 @@ public function __construct($adminEmail)
     }
 ```
 
-```
+```yaml
 # config/services.yaml
 services:
     # ...
@@ -877,10 +906,12 @@ services:
 
 ### service tag 
 
+https://symfony.com/doc/current/reference/dic_tags.html数据
+
 https://symfony.com/doc/current/service_container/tags.html
 
 方法一
-```
+```php
 # config/services.yaml
 services:
 	
@@ -894,7 +925,7 @@ services:
 ``` 	
 
 方法二
-```
+```php
 // src/Kernel.php
 class Kernel extends BaseKernel
 {
@@ -910,3 +941,337 @@ class Kernel extends BaseKernel
 ```
 
 
+
+## reCAPTCHA 
+https://www.youtube.com/watch?v=sNmpddaseK8&t=940s
+https://www.youtube.com/watch?v=82yVPNwC8cY&list=PLjwdMgw5TTLX7wmorGgfrqI9TcA8nMb29
+
+修改 composer.json
+```json
+ "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+        	+ "MyLib\\RecaptchaBundle\\": "lib/RecaptchaBundle"
+        }
+    },
+```
+$ composer dump-autoload
+
+
+
+src\Entity\Contact.php
+```php
+#增加
+private $recaptcha ;
+
+  public function getRecaptcha(): ?string
+  {
+    return $this->recaptcha;
+  }
+  public function setRecaptcha(string $recaptcha): Contact
+  {
+    $this->recaptcha = $recaptcha;
+    return $this;
+  }
+```
+
+
+
+src\Form\ContactType.php
+```php
+#增加
+->add('recaptcha', RecaptchaSubmitType::class,[
+                'label'=>"Envoyer" # 不写则显示Recaptcha
+            ])
+```
+
+config/bundles.php
+```php
+	+ MyLib\RecaptchaBundle\RecaptchaBundle::class => ['all' => true],
+```
+
+lib/RecaptchaBundle/Type/RecaptchaSubmitType.php
+```php
+<?php
+
+namespace MyLib\RecaptchaBundle\Type ;
+ 
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType ;
+use Symfony\Component\OptionsResolver\OptionsResolver ;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView ;
+
+
+
+class RecaptchaSubmitType extends AbstractType{
+
+    public function configureOption(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            "mapped"=> false # 未对应任何数据字段
+        ]);
+
+    }
+    public function buildView(FormView $view , FormInterface $form , array $option )
+    {
+       // $view->vars["label"] = false ; 
+    }
+    public function getBlockPrefix()
+    {
+        return "recaptcha_submit"; # 定义前缀 lib/RecaptachBundle/Resources/views/fields.html.twig
+    }
+    public function getParent()
+    {
+        return TextType::class;
+    }
+
+}
+```
+
+
+lib/RecaptachBundle/Resources/views/fields.html.twig
+```twig
+# 空着
+```
+
+
+用 $ php bin/console debug:twig 查看 发现多了
+
+	@Recaptcha       lib\RecaptchaBundle/Resources/views\
+	@!Recaptcha      lib\RecaptchaBundle/Resources/views\
+
+lib/RecaptachBundle/Resources/views/fields.html.twig
+```twig
+{% block recaptcha_submit_widget %}
+    {% block submit_widget %}{% endblock %} {# 调用默认的submit按钮样式 #}
+{% endblock %}
+```
+
+
+### 把刚刚写的fields.html.twig 加入到 twig.form.resources 这样就可以调用它 
+
+$ php bin/console debug:container --parameters  查看定义的全局变量 
+
+$ php bin/console debug:container --parameter=twig.form.resources 查看某个全局变量  twig.form.resources
+
+
+
+lib/RecaptchaBundle/RecaptchaBundle.php
+```php
+ #增加 
+ public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+        $container->addCompilerPass(new RecaptchaCompilerPass());
+    }
+```
+
+lib\RecaptchaBundle\RecaptchaCompilerPass.php
+```php
+namespace MyLib\RecaptchaBundle;
+
+use Symfony\Component\DependencyInjection\ContainerBuilder ;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface ;
+
+class RecaptchaCompilerPass implements CompilerPassInterface{
+
+    public function process(ContainerBuilder $container){
+
+        if($container->hasParameter("twig.form.resources"))
+        {
+            $resources = $container->getParameter("twig.form.resources")?: [] ;
+
+            array_unshift($resources , '@Recaptcha/fields.html.twig' ) ;
+            $container->setParameter( "twig.form.resources", $resources ) ;
+        }
+            
+        
+    }
+}
+
+```
+
+刷新页面  http://localhost:8000/biens/tiel-112 发现定义按钮已经出现在里面了 
+
+#### 重写刚刚定义按钮文字 
+
+方法1
+
+	lib\RecaptchaBundle\Type\RecaptchaSubmitType.php :
+		增加 $view->vars["button"] = $option['label'] ;
+
+	lib\RecaptchaBundle\Resources\views\fields.html.twig : 
+		增加 {% set label = button %}  
+    	{% block submit_widget %}{% endblock %} 
+
+方法2
+
+	或者 只要修改 lib\RecaptchaBundle\Resources\views\fields.html.twig : 增加{% set label = "Envoyer" %} , 即可 
+
+
+#### 为按钮设置 class
+
+lib\RecaptchaBundle\Resources\views\fields.html.twig : 
+
+```tiwg
+# 继承原来的 并增加class:'g-recaptcha'
+{% set attr = attr | merge({class:'g-recaptcha' }) %}
+```
+
+#### 为样式文件传入参数
+
+##### 方法一
+
+lib\RecaptchaBundle\Resources\views\fields.html.twig
+
+```yaml
+#修改 
+{% set attr = attr | merge({class:'g-recaptcha' , 'data-sitekey':key , 'data-callback':'' }) %} 
+```
+
+config\packages\recaptcha.yaml
+
+```yaml
+services:
+  recaptcha.type : #定义一个名为 recaptcha.type 的服务
+    class: MyLib\RecaptchaBundle\Type\RecaptchaSubmitType # 定义要载入的class
+    tags: ['form.type']
+    arguments:
+      $key: '6LeIohoUAAAAAOtXJI_WbAwVoPiALQcg3q2JKiKX'
+ ```
+
+
+lib\RecaptchaBundle\Type\RecaptchaSubmitType.php
+
+```php
+
+增加 
+/**
+* @var string
+*/
+private $key ;
+
+public function __construct(string $key )
+{
+$this->key = $key ;
+}
+
+
+
+	
+public function buildView(FormView $view, FormInterface $form, array $option    )
+{
+    $view->vars["key"] =  $this->key ;   增加这一行	 
+}	
+
+```
+
+##### 方法二  载入自定义 yaml 
+
+创建 lib\RecaptchaBundle\DependencyInjection\RecaptchaExtension.php
+```php
+namespace MyLib\RecaptchaBundle\DependencyInjection;
+
+use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Config\FileLocator;
+
+# use MyLib\RecaptchaBundle\DependencyInjection\Configuration;
+
+class RecaptchaExtension extends Extension  {
+
+    /**
+     * Loads a specific configuration 
+     * 
+     * @throws \InvalidArgumentException When proviced tag is not defined in this extension
+     */
+    public function load(array $configs , ContainerBuilder $container ){
+
+        $loader = new YamlFileLoader(
+            $container,
+            new FileLocator(__DIR__ . '/../Resources/config' )
+         ) ;
+
+        $loader->load('services.yaml') ; 
+
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration,$configs);
+        $container->setParameter('recaptcha.key' , $config['key']);
+        $container->setParameter('recaptcha.secret' , $config['secret']);
+        # $ php bin/console debug:container --parameter=recaptcha.key
+        
+    }
+}
+```
+
+创建lib\RecaptchaBundle\Resources\config\services.yaml
+```yaml
+services:
+  recaptcha.type : #定义一个名为 recaptcha.type 的服务
+    class: MyLib\RecaptchaBundle\Type\RecaptchaSubmitType # 定义要载入的class
+    tags: ['form.type']
+    arguments:
+      $key: '%recaptcha.key%'      
+      #$secret: '%recaptcha.secret%'
+```
+
+创建lib\RecaptchaBundle\DependencyInjection\Configuration.php
+```php
+
+namespace MyLib\RecaptchaBundle\DependencyInjection;
+
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+
+class Configuration implements ConfigurationInterface{
+ 
+    /**
+     * Generates the configuration tree builder
+     * 
+     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder the tree builder
+     */
+    public function getConfigTreeBuilder(){
+
+        $treeBuilder = new TreeBuilder();
+        $rootNode = $treeBuilder->root('recaptcha') ; #小写bundle名
+        $rootNode
+            ->children()
+            ->scalarNode('key')
+            ->isRequired()
+            ->cannotBeEmpty()
+            ->end()
+            ->scalarNode('secret')
+            ->isRequired()
+            ->cannotBeEmpty()
+            ->end()
+        ->end() ;
+        return $treeBuilder ;
+
+    }
+
+}
+```
+
+config\packages\recaptcha.yaml
+```yaml
+recaptcha : # bundle 名
+  key: '6LeIohoUAAAAAOtXJI_WbAwVoPiALQcg3q2JKiKX'
+  secret: '6LeIohoUAAAAANrafw8NeM5y44AzzvmoLXLq09jk'
+```
+
+#### 总结 
+
+	1. config\packages\recaptcha.yaml 定义 值 
+	2. lib\RecaptchaBundle\Resources\config\services.yaml 获取上面定义的值 给某个类的构造函数 传入这个 参数 
+	3. lib\RecaptchaBundle\DependencyInjection\RecaptchaExtension.php 使用上面两个个yaml文件,ps这个文件会自动调用  
+	4. 使用方法 , 在某个类的构造函数传入这个参数 如 
+```php
+	public function __construct(string $key )
+	{
+		$this->key = $key ;
+	}
+```	
+
+https://www.youtube.com/watch?v=sNmpddaseK8&list=PLjwdMgw5TTLX7wmorGgfrqI9TcA8nMb29&index=14 32:30

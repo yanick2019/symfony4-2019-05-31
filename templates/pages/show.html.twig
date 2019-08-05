@@ -64,7 +64,7 @@
 
 
                         <a class="btn btn-primary" data-target="#contactForm" data-toggle="collapse" href="#">Contater l'agence</a>
-                        <div class="mt-4  collapse  {% if form.vars.submitted and not form.vars.valid  %}  show {% endif %} " id="contactForm">
+                        <div class="mt-4  collapse show {% if form.vars.submitted and not form.vars.valid  %}  show {% endif %} " id="contactForm">
                             {{ form_start(form)}}
                             <div class="row">
                                 <div class="col">{{ form_row(form.firstname)}}</div>
@@ -78,7 +78,7 @@
                                 <div class="col">{{ form_rest(form)}}</div>
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-primary">Envoyer</button>
+                               {#  <button class="btn btn-primary">Envoyer</button> #}
                             </div>
                             {{ form_end(form)}}
                         </div>

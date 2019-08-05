@@ -55,6 +55,18 @@ class Contact
    */
   private $property ;
 
+  private $recaptcha ;
+
+  public function getRecaptcha(): ?string
+  {
+    return $this->recaptcha;
+  }
+  public function setRecaptcha(string $recaptcha): Contact
+  {
+    $this->recaptcha = $recaptcha;
+    return $this;
+  }
+
 
   public function getFirstname(): ?string
   {

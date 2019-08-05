@@ -36,6 +36,14 @@ class PictureRepository extends ServiceEntityRepository
      */
     public function findPicForProperty( array $properties  ) 
     {
+        /*
+         * $query = $em->createQuery('SELECT u, p FROM CmsUser u JOIN u.phonenumbers p');
+            $users = $query->getResult(); // array of CmsUser objects with the phonenumbers association loaded
+            $phonenumbers = $users[0]->getPhonenumbers();
+         */
+
+        # https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/query-builder.html#the-expr-class
+
         $qb = $this->createQueryBuilder('p');
         $pictures = $qb
             ->select('p')
@@ -46,7 +54,7 @@ class PictureRepository extends ServiceEntityRepository
                         ->select('Max(p2.id)')
                         ->where('p2.Property IN (:properties)')
                         ->groupBy('p2.Property')
-                        ->getDQL()
+                        ->getDQL() ## getDQL() 应该是返回一个数据 因为 Example - $qb->expr()->in('u.id', array(1, 2, 3))
                 )
 
             )

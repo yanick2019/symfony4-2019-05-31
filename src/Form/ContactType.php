@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use MyLib\RecaptchaBundle\Type\RecaptchaSubmitType ;
  
 class ContactType extends AbstractType
 {
@@ -21,7 +22,11 @@ class ContactType extends AbstractType
             ->add('lastname', TextType::class)
             ->add('phone', TextType::class ,['required' =>false ])
             ->add('email', EmailType::class)
-            ->add('message', TextareaType::class);
+            ->add('message', TextareaType::class)
+            ->add('recaptcha', RecaptchaSubmitType::class,[
+                'label'=>"Envoyer" # 不写则显示Recaptcha
+            ])
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver)

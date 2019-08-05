@@ -1,5 +1,7 @@
+# config/security.yaml
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+      
     providers:
         from_database:
                 entity:
@@ -19,7 +21,7 @@ security:
                 #https://symfony.com/doc/current/reference/configuration/security.html
                 #true  # true 可写可不写 只要form_login 没被注释 当访问/admin 且不是ROLE_ADMIN 则会要求需要登录
                 check_path: /login # 登录表单提交到的页面
-                login_path: /login  # 默认登录页面 到需要权限的页面时,却未登录说跳转的页面
+                login_path: /login  # 默认跳转页面 到需要权限的页面时,却未登录说跳转的页面
                 default_target_path:  /  # 登录页面没有前一页时 登录成功跳转的路由 否则跳转到登录页的前一页 
                 #always_use_default_target_path: true # 就算有登录页面有前一页 ,还是跳至default_target_path
  
