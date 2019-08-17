@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use MyLib\RecaptchaBundle\Constraints\Recaptcha ; 
 
 
 
@@ -24,10 +25,11 @@ class RecaptchaSubmitType extends AbstractType
         $this->key = $key ;
     }
 
-    public function configureOption(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            "mapped" => false # 未对应任何数据字段
+            "mapped" => false  , # 未对应任何数据字段
+            "constraints" => new Recaptcha() #  用来验证表单数据
         ]);
     }
     public function buildView(FormView $view, FormInterface $form, array $option    )

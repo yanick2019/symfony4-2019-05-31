@@ -1,3 +1,14 @@
 recaptcha : # bundle 名
-  key: '6LeIohoUAAAAAOtXJI_WbAwVoPiALQcg3q2JKiKX'
-  secret: '6LeIohoUAAAAANrafw8NeM5y44AzzvmoLXLq09jk'
+  key: '%env(GOOGLE_RECAPTCHA_KEY)%'
+  secret: '%env(GOOGLE_RECAPTCHA_SECRET)%'
+  #'%env(GOOGLE_RECAPTCHA_KEY)%' 在.env中定义GOOGLE_RECAPTCHA_KEY
+  
+  
+  
+  # v3
+  # 6LfZcLMUAAAAAMxDe-pJoDXnHuz3ybKIH7DCaQQj
+  # 6LfZcLMUAAAAAF4QTZ5D_JQmaQmjbOkonwsv_rSs
+  
+  # v2 
+  # key:  6LelcbMUAAAAAE3hm3UykUlVRDqv9kR4jvDsWB-L
+  # secret: 6LelcbMUAAAAAFVVo3jFKfnfdnQzKuhQrQziAapK

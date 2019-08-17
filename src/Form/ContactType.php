@@ -23,8 +23,12 @@ class ContactType extends AbstractType
             ->add('phone', TextType::class ,['required' =>false ])
             ->add('email', EmailType::class)
             ->add('message', TextareaType::class)
-            ->add('recaptcha', RecaptchaSubmitType::class,[
-                'label'=>"Envoyer" # 不写则显示Recaptcha
+            ->add('recaptcha', RecaptchaSubmitType::class,
+            [
+                'label'=>"Envoyer" , # 不写则显示Recaptcha
+                'attr'=>[
+                    'class'=>" btn btn-primary" 
+                ]
             ])
             ;
     }

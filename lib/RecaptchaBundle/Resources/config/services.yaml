@@ -5,3 +5,9 @@ services:
     arguments:
       $key: '%recaptcha.key%'      
       #$secret: '%recaptcha.secret%'
+
+      
+  recaptcha.validator:
+    class: MyLib\RecaptchaBundle\Constraints\RecaptchaValidator
+    tags: ['validator.constraint_validator']
+    autowire: true  

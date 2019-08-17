@@ -2,29 +2,30 @@
 
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
-        function {{ id }}RecaptchaSubmit(token)
-        {
+        function {{ id }}RecaptchaSubmit (token) {
+
             var elem = document.getElementById('{{ id }}')
-            while(elem.parenElement === null )
-            {
-                if(elem.tagNmae === 'FORM')
-                {
+   
+            while (elem.parenElement !== null) {
+
+
+                if (elem.tagName === 'FORM') {
                     elem.submit();
                     break;
                 }
-                elem = elem.parenElement ;
+                elem = elem.parentElement;
+
 
             }
+
         }
-    
     </script>
     {% set label = button %}
-    
+
     {# 继承原来的 并增加class:'g-recaptcha' #}
-    {% set attr = attr | merge({class:'g-recaptcha' , 'data-sitekey':key , 'data-callback': id ~ "RecaptchaSubmit"  }) %} 
+    {% set attr = attr | merge({class: (attr.class|default('')) ~ ' g-recaptcha' , 'data-sitekey':key , 'data-callback': id ~ "RecaptchaSubmit"  }) %}
 
-    {% block submit_widget %}{% endblock %} {# 调用默认的submit按钮样式 #}
+   
+    {% block submit_widget %}{% endblock %}
+    {# 调用默认的submit按钮样式 #}
 {% endblock %}
- 
-
- 

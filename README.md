@@ -58,8 +58,7 @@ elopment web server,
   * Write test cases in the tests/ folder
   * Run php bin/phpunit
   
-  教程地址
-  https://www.youtube.com/watch?v=9gFhvApgM20&list=PLjwdMgw5TTLX7wmorGgfrqI9TcA8nMb29&index=7
+
   
   一般操作的文件夹是 
   config  操作routes.yaml
@@ -72,7 +71,7 @@ elopment web server,
 	根目录 .env文件
 		DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name 改为
 		DATABASE_URL=mysql://root:wxz@127.0.0.1:3306/masuperagence
-	修改配置文件  config--packages--doctrine.yaml  
+	修改配置文件  config/packages/doctrine.yaml  
 	
 ### 启动symfony服务器 
 	先cd 到项目所在文件夹
@@ -943,8 +942,8 @@ class Kernel extends BaseKernel
 
 
 ## reCAPTCHA 
-https://www.youtube.com/watch?v=sNmpddaseK8&t=940s
-https://www.youtube.com/watch?v=82yVPNwC8cY&list=PLjwdMgw5TTLX7wmorGgfrqI9TcA8nMb29
+
+https://www.google.com/recaptcha/admin/site/347304153
 
 修改 composer.json
 ```json
@@ -1006,7 +1005,7 @@ use Symfony\Component\Form\FormView ;
 
 class RecaptchaSubmitType extends AbstractType{
 
-    public function configureOption(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             "mapped"=> false # 未对应任何数据字段
@@ -1274,4 +1273,93 @@ recaptcha : # bundle 名
 	}
 ```	
 
-https://www.youtube.com/watch?v=sNmpddaseK8&list=PLjwdMgw5TTLX7wmorGgfrqI9TcA8nMb29&index=14 32:30
+
+
+
+###  自定义表单验证
+
+当修改了translations下面的yaml翻译文件 需要运行指令清理缓存修改的内容呈现
+清理缓存
+
+```bash
+$ php bin/console cache:clear
+```
+
+
+lib\RecaptchaBundle\Constraints\Recaptcha.php
+```php
+namespace MyLib\RecaptchaBundle\Constraints;
+
+use Symfony\Component\Validator\Constraint;
+
+class Recaptcha extends Constraint{
+
+    public $message = 'Invalid Recaptcha' ; # 错误信息
+ 
+}
+```
+
+
+lib\RecaptchaBundle\Type\RecaptchaSubmitType.php
+```php
+$resolver->setDefaults([
+            "mapped" => false ,# 未对应任何数据字段
+           + "constraints" => new Recaptcha() 
+        ]);
+```
+
+
+lib\RecaptchaBundle\Constraints\RecaptchaValidator.php
+```php
+namespace MyLib\RecaptchaBundle\Constraints;
+
+use Symfony\Component\Validator\ConstraintValidator ;
+use Symfony\Component\Validator\Constraint ; 
+use Symfony\Component\HttpFoundation\RequestStack ;
+
+#需要services.yaml配合
+class RecaptchaValidator extends ConstraintValidator{
+
+    /**
+     * @var RequestStack
+     */
+    private $requestStack ;
+
+    public function __construct(RequestStack $requestStack )
+    {
+        $this->requestStack = $requestStack ;
+    }
+
+    /**
+     * Check if the passed value is valid
+     * 
+     * @param mixed $value The value that should be validated
+     * @param Contraint $constraint The contraint for the validation
+     */
+    public function validate($value , Constraint $constraint )
+    {
+        $recaptchaResponse = $this->requestStack->getCurrentRequest()->request->get('g-recaptcha-response')  ; 
+        if( empty($recaptchaResponse))
+        {
+            $this->context->buildViolation($constraint->message)->addViolation();
+            return ; 
+        }
+    }
+
+}
+
+
+```
+
+
+
+lib\RecaptchaBundle\Resources\config\services.yaml
+```yaml
+#
++ 
+  recaptcha.validator:
+    class: MyLib\RecaptchaBundle\Constraints\RecaptchaValidator
+    tags: ['validator.constraint_validator']
+    autowire: true 
+```
+

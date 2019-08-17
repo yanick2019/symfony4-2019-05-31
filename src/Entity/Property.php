@@ -343,7 +343,7 @@ class Property
     /**
      * @return Collection|Option[]
      */
-    public function getOptions(): Collection
+    public function getOptions(): ?Collection
     {
         return $this->options;
     }

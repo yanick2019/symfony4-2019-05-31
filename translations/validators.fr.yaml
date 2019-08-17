@@ -1,3 +1,4 @@
 # translations/validators.fr.yaml
-Cette valeur ne doit pas être vide.: Cette valeur ne doit pas être vide.
+Cette valeur ne doit pas être vide.: Cette valeur ne doit pas etre vide.
 contact.phone.Regex.invalide: okok
+Invalid Recaptcha: Recaptcha Invalide
